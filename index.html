@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Produtos Vargem do Itacolomi | Direto da Roça para sua Mesa</title>
+    <link rel="stylesheet" href="estilo.css">
+    
+    <!-- Configurações para PWA (Aplicativo na Tela Inicial) -->
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#2e4d30">
+    <script>
+      if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.register('sw.js');
+      }
+    </script>
+</head>
+<body>
+    <main class="main-container">
+        
+        <!-- Topo / Apresentação -->
+        <div class="card-bloco card-topo">
+            <span class="tag-badge">🌿 TRADIÇÃO E QUALIDADE ARTESANAL</span>
+            <h1>Produtos Vargem do Itacolomi</h1>
+            <p class="texto-descricao">
+                O verdadeiro sabor da roça levado até você. Escolha seus produtos e envie o pedido direto pelo WhatsApp.
+            </p>
+        </div>
+
+        <!-- Vitrine de Produtos -->
+        <div class="card-bloco">
+            <h2 class="titulo-secao">🧀 Nossos Produtos</h2>
+            <p class="texto-descricao-centro">Clique em "Detalhes" para ver a descrição completa ou adicione direto.</p>
+            
+            <div class="grid-produtos">
+                
+                <!-- 1. Queijo Fresco -->
+                <div class="card-produto-item" data-nome="Queijo Fresco" data-preco="22.00" data-desc="Queijo fresquinho e caseiro, feito de forma artesanal. É um queijo macio, do dia, ideal para comer a qualquer hora e acompanhar um bom café." data-img="🧀" data-disponivel="true">
+                    <div class="prod-icone">🧀</div>
+                    <div class="prod-info-rapida">
+                        <h3>Queijo Fresco</h3>
+                        <span class="preco">R$ 22,00</span>
+                        <span class="status-texto">Disponível</span>
+                    </div>
+                    <div class="prod-botoes">
+                        <button type="button" class="btn-detalhes" onclick="abrirDetalhes(this)">Detalhes</button>
+                        <button type="button" class="btn-add-rapido" onclick="adicionarDireto(this)">+ Adicionar</button>
+                        <button type="button" class="btn-toggle-disp" onclick="alternarDisponibilidade(this)">Indisponibilizar</button>
+                    </div>
+                </div>
+
+                <!-- 2. Queijo Curado -->
+                <div class="card-produto-item" data-nome="Queijo Curado" data-preco="25.00" data-desc="Queijo artesanal curado, com o ponto de maturação ideal para quem gosta de um sabor mais acentuado e textura firme." data-img="🧀" data-disponivel="true">
+                    <div class="prod-icone">🧀</div>
+                    <div class="prod-info-rapida">
+                        <h3>Queijo Curado</h3>
+                        <span class="preco">R$ 25,00</span>
+                        <span class="status-texto">Disponível</span>
+                    </div>
+                    <div class="prod-botoes">
+                        <button type="button" class="btn-detalhes" onclick="abrirDetalhes(this)">Detalhes</button>
+                        <button type="button" class="btn-add-rapido" onclick="adicionarDireto(this)">+ Adicionar</button>
+                        <button type="button" class="btn-toggle-disp" onclick="alternarDisponibilidade(this)">Indisponibilizar</button>
+                    </div>
+                </div>
+
+                <!-- 3. Mel (500g) -->
+                <div class="card-produto-item" data-nome="Mel (500g)" data-preco="16.00" data-desc="Mel puro e natural, colhido com cuidado na região de Vargem do Itacolomi, sem aditivos ou conservantes artificiais. Pote com 500 gramas." data-img="🍯" data-disponivel="true">
+                    <div class="prod-icone">🍯</div>
+                    <div class="prod-info-rapida">
+                        <h3>Mel (500g)</h3>
+                        <span class="preco">R$ 16,00</span>
+                        <span class="status-texto">Disponível</span>
+                    </div>
+                    <div class="prod-botoes">
+                        <button type="button" class="btn-detalhes" onclick="abrirDetalhes(this)">Detalhes</button>
+                        <button type="button" class="btn-add-rapido" onclick="adicionarDireto(this)">+ Adicionar</button>
+                        <button type="button" class="btn-toggle-disp" onclick="alternarDisponibilidade(this)">Indisponibilizar</button>
+                    </div>
+                </div>
+
+                <!-- 4. Mel (Quilo) -->
+                <div class="card-produto-item" data-nome="Mel (Quilo)" data-preco="30.00" data-desc="Mel puro e natural, colhido com cuidado na região de Vargem do Itacolomi, sem aditivos ou conservantes artificiais. Valor referente a 1 quilo." data-img="🍯" data-disponivel="true">
+                    <div class="prod-icone">🍯</div>
+                    <div class="prod-info-rapida">
+                        <h3>Mel (Quilo)</h3>
+                        <span class="preco">R$ 30,00 / kg</span>
+                        <span class="status-texto">Disponível</span>
+                    </div>
+                    <div class="prod-botoes">
+                        <button type="button" class="btn-detalhes" onclick="abrirDetalhes(this)">Detalhes</button>
+                        <button type="button" class="btn-add-rapido" onclick="adicionarDireto(this)">+ Adicionar</button>
+                        <button type="button" class="btn-toggle-disp" onclick="alternarDisponibilidade(this)">Indisponibilizar</button>
+                    </div>
+                </div>
+
+                <!-- 5. Leite -->
+                <div class="card-produto-item" data-nome="Leite (Pet 2L)" data-preco="8.00" data-desc="Leite puro de fazenda, ordenhado com higiene e cuidado. Engarrafado fresco em garrafa Pet de 2 litros, mantendo o sabor original da roça." data-img="🥛" data-disponivel="true">
+                    <div class="prod-icone">🥛</div>
+                    <div class="prod-info-rapida">
+                        <h3>Leite (Pet 2L)</h3>
+                        <span class="preco">R$ 8,00</span>
+                        <span class="status-texto">Disponível</span>
+                    </div>
+                    <div class="prod-botoes">
+                        <button type="button" class="btn-detalhes" onclick="abrirDetalhes(this)">Detalhes</button>
+                        <button type="button" class="btn-add-rapido" onclick="adicionarDireto(this)">+ Adicionar</button>
+                        <button type="button" class="btn-toggle-disp" onclick="alternarDisponibilidade(this)">Indisponibilizar</button>
+                    </div>
+                </div>
+
+                <!-- 6. Própolis -->
+                <div class="card-produto-item" data-nome="Própolis (Vidro 10ml)" data-preco="15.00" data-desc="Extrato de própolis já curtido no álcool de cereais, ideal para o uso diário e fortalecimento da imunidade. Apresentado em vidro de 10ml com conta-gotas." data-img="🌿" data-disponivel="true">
+                    <div class="prod-icone">🌿</div>
+                    <div class="prod-info-rapida">
+                        <h3>Própolis (10ml)</h3>
+                        <span class="preco">R$ 15,00</span>
+                        <span class="status-texto">Disponível</span>
+                    </div>
+                    <div class="prod-botoes">
+                        <button type="button" class="btn-detalhes" onclick="abrirDetalhes(this)">Detalhes</button>
+                        <button type="button" class="btn-add-rapido" onclick="adicionarDireto(this)">+ Adicionar</button>
+                        <button type="button" class="btn-toggle-disp" onclick="alternarDisponibilidade(this)">Indisponibilizar</button>
+                    </div>
+                </div>
+
+                <!-- 7. Cachaça -->
+                <div class="card-produto-item" data-nome="Cachaça (Pet 2L)" data-preco="20.00" data-desc="Cachaça artesanal de alambique, produzida com o verdadeiro sabor tradicional da roça. Comercializada em garrafa Pet resistente de 2 litros." data-img="🥃" data-disponivel="true">
+                    <div class="prod-icone">🥃</div>
+                    <div class="prod-info-rapida">
+                        <h3>Cachaça (Pet 2L)</h3>
+                        <span class="preco">R$ 20,00</span>
+                        <span class="status-texto">Disponível</span>
+                    </div>
+                    <div class="prod-botoes">
+                        <button type="button" class="btn-detalhes" onclick="abrirDetalhes(this)">Detalhes</button>
+                        <button type="button" class="btn-add-rapido" onclick="adicionarDireto(this)">+ Adicionar</button>
+                        <button type="button" class="btn-toggle-disp" onclick="alternarDisponibilidade(this)">Indisponibilizar</button>
+                    </div>
+                </div>
+
+                <!-- 8. Feijão Preto -->
+                <div class="card-produto-item" data-nome="Feijão Preto (Quilo)" data-preco="8.00" data-desc="Feijão preto selecionado da roça, com grãos novos que garantem um cozimento rápido e um caldo caprichado. Valor por quilo." data-img="🫘" data-disponivel="true">
+                    <div class="prod-icone">🫘</div>
+                    <div class="prod-info-rapida">
+                        <h3>Feijão Preto</h3>
+                        <span class="preco">R$ 8,00 / kg</span>
+                        <span class="status-texto">Disponível</span>
+                    </div>
+                    <div class="prod-botoes">
+                        <button type="button" class="btn-detalhes" onclick="abrirDetalhes(this)">Detalhes</button>
+                        <button type="button" class="btn-add-rapido" onclick="adicionarDireto(this)">+ Adicionar</button>
+                        <button type="button" class="btn-toggle-disp" onclick="alternarDisponibilidade(this)">Indisponibilizar</button>
+                    </div>
+                </div>
+
+                <!-- 9. Feijão Vermelho -->
+                <div class="card-produto-item" data-nome="Feijão Vermelho (Quilo)" data-preco="9.50" data-desc="Feijão vermelho colhido com cuidado, excelente para o preparo de pratos tradicionais e caldos saborosos. Valor por quilo." data-img="🫘" data-disponivel="true">
+                    <div class="prod-icone">🫘</div>
+                    <div class="prod-info-rapida">
+                        <h3>Feijão Vermelho</h3>
+                        <span class="preco">R$ 9,50 / kg</span>
+                        <span class="status-texto">Disponível</span>
+                    </div>
+                    <div class="prod-botoes">
+                        <button type="button" class="btn-detalhes" onclick="abrirDetalhes(this)">Detalhes</button>
+                        <button type="button" class="btn-add-rapido" onclick="adicionarDireto(this)">+ Adicionar</button>
+                        <button type="button" class="btn-toggle-disp" onclick="alternarDisponibilidade(this)">Indisponibilizar</button>
+                    </div>
+                </div>
+
+                <!-- 10. Ovos Caipira -->
+                <div class="card-produto-item" data-nome="Ovos Caipira (Pente c/ 30)" data-preco="30.00" data-desc="Ovos de galinhas criadas soltas no terreiro, com gema bem amarela e sabor incomparável. Pente com 30 unidades." data-img="🥚" data-disponivel="true">
+                    <div class="prod-icone">🥚</div>
+                    <div class="prod-info-rapida">
+                        <h3>Ovos Caipira (Pente 30)</h3>
+                        <span class="preco">R$ 30,00</span>
+                        <span class="status-texto">Disponível</span>
+                    </div>
+                    <div class="prod-botoes">
+                        <button type="button" class="btn-detalhes" onclick="abrirDetalhes(this)">Detalhes</button>
+                        <button type="button" class="btn-add-rapido" onclick="adicionarDireto(this)">+ Adicionar</button>
+                        <button type="button" class="btn-toggle-disp" onclick="alternarDisponibilidade(this)">Indisponibilizar</button>
+                    </div>
+                </div>
+
+                <!-- 11. Frango Limpo -->
+                <div class="card-produto-item" data-nome="Frango Limpo (Quilo)" data-preco="60.00" data-desc="Frango caipira criado no terreiro, de carne firme e saborosa. O produto é entregue totalmente limpo e pronto para o preparo. Valor por quilo." data-img="🍗" data-disponivel="true">
+                    <div class="prod-icone">🍗</div>
+                    <div class="prod-info-rapida">
+                        <h3>Frango Limpo</h3>
+                        <span class="preco">R$ 60,00 / kg</span>
+                        <span class="status-texto">Disponível</span>
+                    </div>
+                    <div class="prod-botoes">
+                        <button type="button" class="btn-detalhes" onclick="abrirDetalhes(this)">Detalhes</button>
+                        <button type="button" class="btn-add-rapido" onclick="adicionarDireto(this)">+ Adicionar</button>
+                        <button type="button" class="btn-toggle-disp" onclick="alternarDisponibilidade(this)">Indisponibilizar</button>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- Seção do Carrinho e Envio -->
+        <div class="card-bloco card-carrinho" id="secao-carrinho">
+            <h2 class="titulo-secao">🛒 Seu Carrinho de Pedidos</h2>
+            <div id="lista-carrinho-vazia" class="texto-descricao-centro">O carrinho está vazio. Escolha os produtos acima.</div>
+            <ul id="lista-carrinho-itens" class="carrinho-itens"></ul>
+            
+            <div id="container-total" class="carrinho-total" style="display: none;">
+                <span>Total estimado:</span>
+                <strong id="valor-total">R$ 0,00</strong>
+            </div>
+
+            <button type="button" id="btn-enviar-whatsapp" class="btn-whatsapp" style="display: none;" onclick="enviarPedidoWhatsApp()">
+                📱 Enviar Pedido para o WhatsApp
+            </button>
+        </div>
+
+    </main>
+
+    <!-- Modal de Detalhes do Produto -->
+    <div id="modal-detalhes" class="modal-fundo" style="display: none;">
+        <div class="modal-conteudo">
+            <span class="modal-fechar" onclick="fecharDetalhes()">&times;</span>
+            <div id="modal-icone" class="modal-icone-grande">🧀</div>
+            <h2 id="modal-titulo">Nome do Produto</h2>
+            <p id="modal-preco" class="modal-preco-destaque">R$ 0,00</p>
+            <p id="modal-descricao" class="modal-texto-desc">Descrição detalhada do produto vai aqui.</p>
+            
+            <div class="modal-controle-qtd">
+                <span>Quantidade:</span>
+                <div class="seletor-qtd">
+                    <button type="button" onclick="alterarQtdModal(-1)">-</button>
+                    <span id="modal-qtd">1</span>
+                    <button type="button" onclick="alterarQtdModal(1)">+</button>
+                </div>
+            </div>
+
+            <button type="button" class="btn-whatsapp" id="btn-modal-add" onclick="adicionarDoModalAoCarrinho()">Adicionar ao Carrinho</button>
+        </div>
+    </div>
+
+    <!-- Script de Interação -->
+    <script>
+        let carrinho = {};
+        let produtoAtual = null;
+        let qtdModal = 1;
+
+        function alternarDisponibilidade(botao) {
+            const card = botao.closest('.card-produto-item');
+            const disponivel = card.getAttribute('data-disponivel') === 'true';
+            const statusTexto = card.querySelector('.status-texto');
+            const btnAdd = card.querySelector('.btn-add-rapido');
+
+            if (disponivel) {
+                card.setAttribute('data-disponivel', 'false');
+                card.classList.add('indisponivel');
+                statusTexto.innerText = 'Esgotado';
+                statusTexto.style.color = '#d9534f';
+                btnAdd.disabled = true;
+                botao.innerText = 'Disponibilizar';
+            } else {
+                card.setAttribute('data-disponivel', 'true');
+                card.classList.remove('indisponivel');
+                statusTexto.innerText = 'Disponível';
+                statusTexto.style.color = '#2e4d30';
+                btnAdd.disabled = false;
+                botao.innerText = 'Indisponibilizar';
+            }
+        }
+
+        function abrirDetalhes(botao) {
+            const card = botao.closest('.card-produto-item');
+            const disponivel = card.getAttribute('data-disponivel') === 'true';
+
+            produtoAtual = {
+                nome: card.getAttribute('data-nome'),
+                preco: parseFloat(card.getAttribute('data-preco')),
+                desc: card.getAttribute('data-desc'),
+                img: card.getAttribute('data-img'),
+                disponivel: disponivel
+            };
+
+            document.getElementById('modal-icone').innerText = produtoAtual.img;
+            document.getElementById('modal-titulo').innerText = produtoAtual.nome;
+            document.getElementById('modal-preco').innerText = `R$ ${produtoAtual.preco.toFixed(2).replace('.', ',')}`;
+            document.getElementById('modal-descricao').innerText = produtoAtual.desc;
+            
+            const btnModalAdd = document.getElementById('btn-modal-add');
+            if (!disponivel) {
+                btnModalAdd.innerText = 'Produto Esgotado';
+                btnModalAdd.style.backgroundColor = '#ccc';
+                btnModalAdd.disabled = true;
+            } else {
+                btnModalAdd.innerText = 'Adicionar ao Carrinho';
+                btnModalAdd.style.backgroundColor = '#25d366';
+                btnModalAdd.disabled = false;
+            }
+
+            qtdModal = 1;
+            document.getElementById('modal-qtd').innerText = qtdModal;
+            document.getElementById('modal-detalhes').style.display = 'flex';
+        }
+
+        function fecharDetalhes() {
+            document.getElementById('modal-detalhes').style.display = 'none';
+        }
+
+        function alterarQtdModal(valor) {
+            qtdModal += valor;
+            if (qtdModal < 1) qtdModal = 1;
+            document.getElementById('modal-qtd').innerText = qtdModal;
+        }
+
+        function adicionarDireto(botao) {
+            const card = botao.closest('.card-produto-item');
+            if (card.getAttribute('data-disponivel') !== 'true') return;
+
+            const nome = card.getAttribute('data-nome');
+            const preco = parseFloat(card.getAttribute('data-preco'));
+            
+            adicionarAoCarrinho(nome, preco, 1);
+        }
+
+        function adicionarDoModalAoCarrinho() {
+            if (produtoAtual && produtoAtual.disponivel) {
+                adicionarAoCarrinho(produtoAtual.nome, produtoAtual.preco, qtdModal);
+                fecharDetalhes();
+            }
+        }
+
+        function adicionarAoCarrinho(nome, preco, qtd) {
+            if (carrinho[nome]) {
+                carrinho[nome].qtd += qtd;
+            } else {
+                carrinho[nome] = { preco: preco, qtd: qtd };
+            }
+            atualizarCarrinhoVisual();
+        }
+
+        function alterarQtdCarrinho(nome, valor) {
+            carrinho[nome].qtd += valor;
+            if (carrinho[nome].qtd <= 0) {
+                delete carrinho[nome];
+            }
+            atualizarCarrinhoVisual();
+        }
+
+        function atualizarCarrinhoVisual() {
+            const lista = document.getElementById('lista-carrinho-itens');
+            const avisoVazio = document.getElementById('lista-carrinho-vazia');
+            const containerTotal = document.getElementById('container-total');
+            const btnWhatsapp = document.getElementById('btn-enviar-whatsapp');
+            
+            lista.innerHTML = '';
