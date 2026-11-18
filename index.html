@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Produtos Vargem do Itacolomi | Direto da Roça para sua Mesa</title>
+    
+    <!-- Link para o CSS separado -->
     <link rel="stylesheet" href="estilo.css">
     
     <!-- Configurações para PWA -->
@@ -14,42 +16,6 @@
         navigator.serviceWorker.register('sw.js');
       }
     </script>
-    <style>
-        /* Estilo do Botão Flutuante do Cadeado (Admin) */
-        .btn-admin-cadeado {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            background-color: #2e4d30;
-            color: white;
-            border: none;
-            border-radius: 50%;
-            width: 50px;
-            height: 50px;
-            font-size: 22px;
-            cursor: pointer;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
-            z-index: 9999;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: transform 0.2s;
-        }
-        .btn-admin-cadeado:hover {
-            transform: scale(1.1);
-        }
-        /* Oculta elementos administrativos por padrão */
-        .admin-only {
-            display: none !important;
-        }
-        /* Quando logado como admin, exibe os botões de controle */
-        body.modo-admin .admin-only {
-            display: inline-block !important;
-        }
-        body.modo-admin .card-produto-item {
-            border: 2px dashed #2e4d30;
-        }
-    </style>
 </head>
 <body>
     <main class="main-container">
@@ -287,67 +253,7 @@
         </div>
     </div>
 
-    <!-- Script de Interação -->
-    <script>
-        let carrinho = {};
-        let produtoAtual = null;
-        let qtdModal = 1;
-        let isAdmin = false;
-
-        // Senha de Administrador (pode alterar aqui se quiser)
-        const SENHA_ADMIN = "1234";
-
-        function solicitarSenhaAdmin() {
-            if (isAdmin) {
-                if (confirm("Deseja sair do modo administrador?")) {
-                    isAdmin = false;
-                    document.body.classList.remove('modo-admin');
-                    document.querySelector('.btn-admin-cadeado').innerText = '🔒';
-                    alert("Modo administrador encerrado.");
-                }
-                return;
-            }
-
-            const senhaDigitada = prompt("Digite a senha de administrador:");
-            if (senhaDigitada === SENHA_ADMIN) {
-                isAdmin = true;
-                document.body.classList.add('modo-admin');
-                document.querySelector('.btn-admin-cadeado').innerText = '🔓';
-                alert("Acesso autorizado! Agora você pode gerenciar a disponibilidade dos produtos.");
-            } else if (senhaDigitada !== null) {
-                alert("Senha incorreta!");
-            }
-        }
-
-        function alternarDisponibilidade(botao) {
-            if (!isAdmin) return;
-            const card = botao.closest('.card-produto-item');
-            const disponivel = card.getAttribute('data-disponivel') === 'true';
-            const statusTexto = card.querySelector('.status-texto');
-            const btnAdd = card.querySelector('.btn-add-rapido');
-
-            if (disponivel) {
-                card.setAttribute('data-disponivel', 'false');
-                card.classList.add('indisponivel');
-                statusTexto.innerText = 'Esgotado';
-                statusTexto.style.color = '#d9534f';
-                btnAdd.disabled = true;
-                botao.innerText = 'Disponibilizar';
-            } else {
-                card.setAttribute('data-disponivel', 'true');
-                card.classList.remove('indisponivel');
-                statusTexto.innerText = 'Disponível';
-                statusTexto.style.color = '#2e4d30';
-                btnAdd.disabled = false;
-                botao.innerText = 'Indisponibilizar';
-            }
-        }
-
-        function abrirDetalhes(botao) {
-            const card = botao.closest('.card-produto-item');
-            const disponivel = card.getAttribute('data-disponivel') === 'true';
-
-            produtoAtual = {
-                nome: card.getAttribute('data-nome'),
-                preco: parseFloat(card.getAttribute('data-preco')),
-                desc: card.getAtt
+    <!-- Script separado (ligado ao arquivo script.js) -->
+    <script src="script.js"></script>
+</body>
+</html>
