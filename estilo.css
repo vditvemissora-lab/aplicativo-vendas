@@ -53,8 +53,14 @@ body {
     padding: 12px;
     gap: 10px;
 }
-.prod-icone {
-    font-size: 28px;
+/* Estilo ajustado para foto real do produto */
+.prod-foto {
+    width: 65px;
+    height: 65px;
+    object-fit: cover;
+    border-radius: 8px;
+    border: 1px solid #ddd;
+    flex-shrink: 0;
 }
 .prod-info-rapida {
     flex-grow: 1;
@@ -202,7 +208,6 @@ body.modo-admin .card-produto-item {
     font-size: 24px;
     cursor: pointer;
 }
-.modal-icone-grande { font-size: 45px; margin-bottom: 10px; }
 .modal-preco-destaque { font-size: 18px; font-weight: bold; color: #2e4d30; }
 .modal-texto-desc { font-size: 14px; color: #666; margin: 15px 0; }
 .modal-controle-qtd { display: flex; align-items: center; justify-content: space-between; margin-bottom: 15px; }
