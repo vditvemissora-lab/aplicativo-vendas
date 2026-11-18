@@ -3,9 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Produtos Vargem do Itacolomi | Direto da Roça para sua Mesa</title>
+    <title id="titulo-pagina-seo">Produtos Vargem do Itacolomi</title>
     
-    <!-- Link para o CSS separado -->
     <link rel="stylesheet" href="estilo.css">
     
     <!-- Configurações para PWA -->
@@ -21,12 +20,21 @@
     <main class="main-container">
         
         <!-- Topo / Apresentação -->
-        <div class="card-bloco card-topo">
-            <span class="tag-badge">🌿 TRADIÇÃO E QUALIDADE ARTESANAL</span>
-            <h1>Produtos Vargem do Itacolomi</h1>
-            <p class="texto-descricao">
+        <div class="card-bloco card-topo" id="bloco-topo">
+            <span class="tag-badge" id="topo-badge">🌿 TRADIÇÃO E QUALIDADE ARTESANAL</span>
+            <h1 id="topo-titulo">Produtos Vargem do Itacolomi</h1>
+            <p class="texto-descricao" id="topo-descricao">
                 O verdadeiro sabor da roça levado até você. Escolha seus produtos e envie o pedido direto pelo WhatsApp.
             </p>
+        </div>
+
+        <!-- Botões de Ação do Administrador (Aparecem ao logar) -->
+        <div class="card-bloco admin-only" style="background: #eef4ee; border: 2px dashed #2e4d30; text-align: center;">
+            <h3 style="color: #2e4d30; margin-top: 0;">⚙️ Painel do Administrador</h3>
+            <div style="display: flex; gap: 10px; justify-content: center; flex-wrap: wrap;">
+                <button type="button" class="btn-add-rapido" onclick="abrirModalProduto()">➕ Adicionar Novo Produto</button>
+                <button type="button" class="btn-detalhes" onclick="abrirModalConfig()">✏️ Editar Textos / Senha</button>
+            </div>
         </div>
 
         <!-- Vitrine de Produtos -->
@@ -35,172 +43,7 @@
             <p class="texto-descricao-centro">Clique em "Detalhes" para ver a descrição completa ou adicione direto.</p>
             
             <div class="grid-produtos" id="grid-produtos">
-                
-                <!-- 1. Queijo Fresco -->
-                <div class="card-produto-item" data-nome="Queijo Fresco" data-preco="22.00" data-desc="Queijo fresquinho e caseiro, feito de forma artesanal. É um queijo macio, do dia, ideal para comer a qualquer hora e acompanhar um bom café." data-img="🧀" data-disponivel="true">
-                    <div class="prod-icone">🧀</div>
-                    <div class="prod-info-rapida">
-                        <h3>Queijo Fresco</h3>
-                        <span class="preco">R$ 22,00</span>
-                        <span class="status-texto">Disponível</span>
-                    </div>
-                    <div class="prod-botoes">
-                        <button type="button" class="btn-detalhes" onclick="abrirDetalhes(this)">Detalhes</button>
-                        <button type="button" class="btn-add-rapido" onclick="adicionarDireto(this)">+ Adicionar</button>
-                        <button type="button" class="btn-toggle-disp admin-only" onclick="alternarDisponibilidade(this)">Indisponibilizar</button>
-                    </div>
-                </div>
-
-                <!-- 2. Queijo Curado -->
-                <div class="card-produto-item" data-nome="Queijo Curado" data-preco="25.00" data-desc="Queijo artesanal curado, com o ponto de maturação ideal para quem gosta de um sabor mais acentuado e textura firme." data-img="🧀" data-disponivel="true">
-                    <div class="prod-icone">🧀</div>
-                    <div class="prod-info-rapida">
-                        <h3>Queijo Curado</h3>
-                        <span class="preco">R$ 25,00</span>
-                        <span class="status-texto">Disponível</span>
-                    </div>
-                    <div class="prod-botoes">
-                        <button type="button" class="btn-detalhes" onclick="abrirDetalhes(this)">Detalhes</button>
-                        <button type="button" class="btn-add-rapido" onclick="adicionarDireto(this)">+ Adicionar</button>
-                        <button type="button" class="btn-toggle-disp admin-only" onclick="alternarDisponibilidade(this)">Indisponibilizar</button>
-                    </div>
-                </div>
-
-                <!-- 3. Mel (500g) -->
-                <div class="card-produto-item" data-nome="Mel (500g)" data-preco="16.00" data-desc="Mel puro e natural, colhido com cuidado na região de Vargem do Itacolomi, sem aditivos ou conservantes artificiais. Pote com 500 gramas." data-img="🍯" data-disponivel="true">
-                    <div class="prod-icone">🍯</div>
-                    <div class="prod-info-rapida">
-                        <h3>Mel (500g)</h3>
-                        <span class="preco">R$ 16,00</span>
-                        <span class="status-texto">Disponível</span>
-                    </div>
-                    <div class="prod-botoes">
-                        <button type="button" class="btn-detalhes" onclick="abrirDetalhes(this)">Detalhes</button>
-                        <button type="button" class="btn-add-rapido" onclick="adicionarDireto(this)">+ Adicionar</button>
-                        <button type="button" class="btn-toggle-disp admin-only" onclick="alternarDisponibilidade(this)">Indisponibilizar</button>
-                    </div>
-                </div>
-
-                <!-- 4. Mel (Quilo) -->
-                <div class="card-produto-item" data-nome="Mel (Quilo)" data-preco="30.00" data-desc="Mel puro e natural, colhido com cuidado na região de Vargem do Itacolomi, sem aditivos ou conservantes artificiais. Valor referente a 1 quilo." data-img="🍯" data-disponivel="true">
-                    <div class="prod-icone">🍯</div>
-                    <div class="prod-info-rapida">
-                        <h3>Mel (Quilo)</h3>
-                        <span class="preco">R$ 30,00 / kg</span>
-                        <span class="status-texto">Disponível</span>
-                    </div>
-                    <div class="prod-botoes">
-                        <button type="button" class="btn-detalhes" onclick="abrirDetalhes(this)">Detalhes</button>
-                        <button type="button" class="btn-add-rapido" onclick="adicionarDireto(this)">+ Adicionar</button>
-                        <button type="button" class="btn-toggle-disp admin-only" onclick="alternarDisponibilidade(this)">Indisponibilizar</button>
-                    </div>
-                </div>
-
-                <!-- 5. Leite -->
-                <div class="card-produto-item" data-nome="Leite (Pet 2L)" data-preco="8.00" data-desc="Leite puro de fazenda, ordenhado com higiene e cuidado. Engarrafado fresco em garrafa Pet de 2 litros, mantendo o sabor original da roça." data-img="🥛" data-disponivel="true">
-                    <div class="prod-icone">🥛</div>
-                    <div class="prod-info-rapida">
-                        <h3>Leite (Pet 2L)</h3>
-                        <span class="preco">R$ 8,00</span>
-                        <span class="status-texto">Disponível</span>
-                    </div>
-                    <div class="prod-botoes">
-                        <button type="button" class="btn-detalhes" onclick="abrirDetalhes(this)">Detalhes</button>
-                        <button type="button" class="btn-add-rapido" onclick="adicionarDireto(this)">+ Adicionar</button>
-                        <button type="button" class="btn-toggle-disp admin-only" onclick="alternarDisponibilidade(this)">Indisponibilizar</button>
-                    </div>
-                </div>
-
-                <!-- 6. Própolis -->
-                <div class="card-produto-item" data-nome="Própolis (Vidro 10ml)" data-preco="15.00" data-desc="Extrato de própolis já curtido no álcool de cereais, ideal para o uso diário e fortalecimento da imunidade. Apresentado em vidro de 10ml com conta-gotas." data-img="🌿" data-disponivel="true">
-                    <div class="prod-icone">🌿</div>
-                    <div class="prod-info-rapida">
-                        <h3>Própolis (10ml)</h3>
-                        <span class="preco">R$ 15,00</span>
-                        <span class="status-texto">Disponível</span>
-                    </div>
-                    <div class="prod-botoes">
-                        <button type="button" class="btn-detalhes" onclick="abrirDetalhes(this)">Detalhes</button>
-                        <button type="button" class="btn-add-rapido" onclick="adicionarDireto(this)">+ Adicionar</button>
-                        <button type="button" class="btn-toggle-disp admin-only" onclick="alternarDisponibilidade(this)">Indisponibilizar</button>
-                    </div>
-                </div>
-
-                <!-- 7. Cachaça -->
-                <div class="card-produto-item" data-nome="Cachaça (Pet 2L)" data-preco="20.00" data-desc="Cachaça artesanal de alambique, produzida com o verdadeiro sabor tradicional da roça. Comercializada em garrafa Pet resistente de 2 litros." data-img="🥃" data-disponivel="true">
-                    <div class="prod-icone">🥃</div>
-                    <div class="prod-info-rapida">
-                        <h3>Cachaça (Pet 2L)</h3>
-                        <span class="preco">R$ 20,00</span>
-                        <span class="status-texto">Disponível</span>
-                    </div>
-                    <div class="prod-botoes">
-                        <button type="button" class="btn-detalhes" onclick="abrirDetalhes(this)">Detalhes</button>
-                        <button type="button" class="btn-add-rapido" onclick="adicionarDireto(this)">+ Adicionar</button>
-                        <button type="button" class="btn-toggle-disp admin-only" onclick="alternarDisponibilidade(this)">Indisponibilizar</button>
-                    </div>
-                </div>
-
-                <!-- 8. Feijão Preto -->
-                <div class="card-produto-item" data-nome="Feijão Preto (Quilo)" data-preco="8.00" data-desc="Feijão preto selecionado da roça, com grãos novos que garantem um cozimento rápido e um caldo caprichado. Valor por quilo." data-img="🫘" data-disponivel="true">
-                    <div class="prod-icone">🫘</div>
-                    <div class="prod-info-rapida">
-                        <h3>Feijão Preto</h3>
-                        <span class="preco">R$ 8,00 / kg</span>
-                        <span class="status-texto">Disponível</span>
-                    </div>
-                    <div class="prod-botoes">
-                        <button type="button" class="btn-detalhes" onclick="abrirDetalhes(this)">Detalhes</button>
-                        <button type="button" class="btn-add-rapido" onclick="adicionarDireto(this)">+ Adicionar</button>
-                        <button type="button" class="btn-toggle-disp admin-only" onclick="alternarDisponibilidade(this)">Indisponibilizar</button>
-                    </div>
-                </div>
-
-                <!-- 9. Feijão Vermelho -->
-                <div class="card-produto-item" data-nome="Feijão Vermelho (Quilo)" data-preco="9.50" data-desc="Feijão vermelho colhido com cuidado, excelente para o preparo de pratos tradicionais e caldos saborosos. Valor por quilo." data-img="🫘" data-disponivel="true">
-                    <div class="prod-icone">🫘</div>
-                    <div class="prod-info-rapida">
-                        <h3>Feijão Vermelho</h3>
-                        <span class="preco">R$ 9,50 / kg</span>
-                        <span class="status-texto">Disponível</span>
-                    </div>
-                    <div class="prod-botoes">
-                        <button type="button" class="btn-detalhes" onclick="abrirDetalhes(this)">Detalhes</button>
-                        <button type="button" class="btn-add-rapido" onclick="adicionarDireto(this)">+ Adicionar</button>
-                        <button type="button" class="btn-toggle-disp admin-only" onclick="alternarDisponibilidade(this)">Indisponibilizar</button>
-                    </div>
-                </div>
-
-                <!-- 10. Ovos Caipira -->
-                <div class="card-produto-item" data-nome="Ovos Caipira (Pente c/ 30)" data-preco="30.00" data-desc="Ovos de galinhas criadas soltas no terreiro, com gema bem amarela e sabor incomparável. Pente com 30 unidades." data-img="🥚" data-disponivel="true">
-                    <div class="prod-icone">🥚</div>
-                    <div class="prod-info-rapida">
-                        <h3>Ovos Caipira (Pente 30)</h3>
-                        <span class="preco">R$ 30,00</span>
-                        <span class="status-texto">Disponível</span>
-                    </div>
-                    <div class="prod-botoes">
-                        <button type="button" class="btn-detalhes" onclick="abrirDetalhes(this)">Detalhes</button>
-                        <button type="button" class="btn-add-rapido" onclick="adicionarDireto(this)">+ Adicionar</button>
-                        <button type="button" class="btn-toggle-disp admin-only" onclick="alternarDisponibilidade(this)">Indisponibilizar</button>
-                    </div>
-                </div>
-
-                <!-- 11. Frango Limpo -->
-                <div class="card-produto-item" data-nome="Frango Limpo (Quilo)" data-preco="60.00" data-desc="Frango caipira criado no terreiro, de carne firme e saborosa. O produto é entregue totalmente limpo e pronto para o preparo. Valor por quilo." data-img="🍗" data-disponivel="true">
-                    <div class="prod-icone">🍗</div>
-                    <div class="prod-info-rapida">
-                        <h3>Frango Limpo</h3>
-                        <span class="preco">R$ 60,00 / kg</span>
-                        <span class="status-texto">Disponível</span>
-                    </div>
-                    <div class="prod-botoes">
-                        <button type="button" class="btn-detalhes" onclick="abrirDetalhes(this)">Detalhes</button>
-                        <button type="button" class="btn-add-rapido" onclick="adicionarDireto(this)">+ Adicionar</button>
-                        <button type="button" class="btn-toggle-disp admin-only" onclick="alternarDisponibilidade(this)">Indisponibilizar</button>
-                    </div>
-                </div>
-
+                <!-- Os produtos serão carregados automaticamente aqui pelo script -->
             </div>
         </div>
 
@@ -215,30 +58,29 @@
                 <strong id="valor-total">R$ 0,00</strong>
             </div>
 
-            <!-- Identificação do Cliente -->
-            <div id="container-cliente" style="display: none; margin-top: 15px; display: flex; flex-direction: column; gap: 8px;">
+            <div id="container-cliente" style="display: none; margin-top: 15px; flex-direction: column; gap: 8px;">
                 <label for="input-nome" style="font-size: 14px; font-weight: bold; color: #2e4d30;">Seu Nome:</label>
                 <input type="text" id="input-nome" placeholder="Digite seu nome completo" style="padding: 10px; border: 1px solid #ccc; border-radius: 8px; font-size: 14px;">
             </div>
 
-            <button type="button" id="btn-enviar-whatsapp" class="btn-whatsapp" style="display: none; margin-top: 15px;" onclick="enviarPedidoWhatsApp()">
+            <button type="button" id="btn-enviar-whatsapp" class="btn-whatsapp" style="display: none;" onclick="enviarPedidoWhatsApp()">
                 📱 Enviar Pedido para o WhatsApp
             </button>
         </div>
 
     </main>
 
-    <!-- Botão Flutuante do Cadeado (Admin) no Canto Inferior Direito -->
+    <!-- Botão Flutuante do Cadeado (Admin) -->
     <button type="button" class="btn-admin-cadeado" onclick="solicitarSenhaAdmin()" title="Área do Administrador">🔒</button>
 
-    <!-- Modal de Detalhes do Produto -->
+    <!-- Modal de Detalhes -->
     <div id="modal-detalhes" class="modal-fundo" style="display: none;">
         <div class="modal-conteudo">
             <span class="modal-fechar" onclick="fecharDetalhes()">&times;</span>
             <div id="modal-icone" class="modal-icone-grande">🧀</div>
             <h2 id="modal-titulo">Nome do Produto</h2>
             <p id="modal-preco" class="modal-preco-destaque">R$ 0,00</p>
-            <p id="modal-descricao" class="modal-texto-desc">Descrição detalhada do produto vai aqui.</p>
+            <p id="modal-descricao" class="modal-texto-desc">Descrição...</p>
             
             <div class="modal-controle-qtd">
                 <span>Quantidade:</span>
@@ -253,7 +95,54 @@
         </div>
     </div>
 
-    <!-- Script separado (ligado ao arquivo script.js) -->
+    <!-- Modal para Adicionar/Editar Produto (Admin) -->
+    <div id="modal-produto" class="modal-fundo" style="display: none;">
+        <div class="modal-conteudo">
+            <span class="modal-fechar" onclick="fecharModalProduto()">&times;</span>
+            <h2 style="color: #2e4d30; margin-top: 0;">Gerenciar Produto</h2>
+            <input type="hidden" id="edit-prod-id">
+            
+            <div style="text-align: left; display: flex; flex-direction: column; gap: 8px; margin-bottom: 15px;">
+                <label style="font-size: 13px; font-weight: bold;">Ícone/Emoji:</label>
+                <input type="text" id="input-prod-icone" placeholder="Ex: 🧀" style="padding: 8px; border: 1px solid #ccc; border-radius: 6px;">
+                
+                <label style="font-size: 13px; font-weight: bold;">Nome do Produto:</label>
+                <input type="text" id="input-prod-nome" placeholder="Ex: Queijo Minas" style="padding: 8px; border: 1px solid #ccc; border-radius: 6px;">
+                
+                <label style="font-size: 13px; font-weight: bold;">Preço (R$):</label>
+                <input type="number" step="0.01" id="input-prod-preco" placeholder="Ex: 25.00" style="padding: 8px; border: 1px solid #ccc; border-radius: 6px;">
+                
+                <label style="font-size: 13px; font-weight: bold;">Descrição:</label>
+                <textarea id="input-prod-desc" placeholder="Detalhes do produto..." style="padding: 8px; border: 1px solid #ccc; border-radius: 6px; height: 60px;"></textarea>
+            </div>
+
+            <button type="button" class="btn-add-rapido" style="width: 100%; padding: 10px;" onclick="salvarProduto()">Salvar Produto</button>
+        </div>
+    </div>
+
+    <!-- Modal de Configurações do Site e Senha (Admin) -->
+    <div id="modal-config" class="modal-fundo" style="display: none;">
+        <div class="modal-conteudo">
+            <span class="modal-fechar" onclick="fecharModalConfig()">&times;</span>
+            <h2 style="color: #2e4d30; margin-top: 0;">Configurações</h2>
+            
+            <div style="text-align: left; display: flex; flex-direction: column; gap: 8px; margin-bottom: 15px;">
+                <label style="font-size: 13px; font-weight: bold;">Nome do Estabelecimento:</label>
+                <input type="text" id="conf-nome-site" style="padding: 8px; border: 1px solid #ccc; border-radius: 6px;">
+                
+                <label style="font-size: 13px; font-weight: bold;">Descrição Principal:</label>
+                <textarea id="conf-desc-site" style="padding: 8px; border: 1px solid #ccc; border-radius: 6px; height: 50px;"></textarea>
+                
+                <hr style="border: 0; border-top: 1px solid #ddd; margin: 10px 0;">
+                
+                <label style="font-size: 13px; font-weight: bold;">Nova Senha de Administrador:</label>
+                <input type="password" id="conf-nova-senha" placeholder="Deixe em branco para não alterar" style="padding: 8px; border: 1px solid #ccc; border-radius: 6px;">
+            </div>
+
+            <button type="button" class="btn-add-rapido" style="width: 100%; padding: 10px;" onclick="salvarConfiguracoes()">Salvar Alterações</button>
+        </div>
+    </div>
+
     <script src="script.js"></script>
 </body>
 </html>
