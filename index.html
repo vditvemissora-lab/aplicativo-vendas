@@ -28,7 +28,7 @@
             </p>
         </div>
 
-        <!-- Botões de Ação do Administrador (Aparecem ao logar) -->
+        <!-- Painel do Administrador (Aparece ao logar) -->
         <div class="card-bloco admin-only" style="background: #eef4ee; border: 2px dashed #2e4d30; text-align: center;">
             <h3 style="color: #2e4d30; margin-top: 0;">⚙️ Painel do Administrador</h3>
             <div style="display: flex; gap: 10px; justify-content: center; flex-wrap: wrap;">
@@ -77,7 +77,7 @@
     <div id="modal-detalhes" class="modal-fundo" style="display: none;">
         <div class="modal-conteudo">
             <span class="modal-fechar" onclick="fecharDetalhes()">&times;</span>
-            <div id="modal-icone" class="modal-icone-grande">🧀</div>
+            <div id="modal-icone" style="margin-bottom: 10px;"></div>
             <h2 id="modal-titulo">Nome do Produto</h2>
             <p id="modal-preco" class="modal-preco-destaque">R$ 0,00</p>
             <p id="modal-descricao" class="modal-texto-desc">Descrição...</p>
@@ -103,8 +103,8 @@
             <input type="hidden" id="edit-prod-id">
             
             <div style="text-align: left; display: flex; flex-direction: column; gap: 8px; margin-bottom: 15px;">
-                <label style="font-size: 13px; font-weight: bold;">Ícone/Emoji:</label>
-                <input type="text" id="input-prod-icone" placeholder="Ex: 🧀" style="padding: 8px; border: 1px solid #ccc; border-radius: 6px;">
+                <label style="font-size: 13px; font-weight: bold;">Link ou Caminho da Foto:</label>
+                <input type="text" id="input-prod-icone" placeholder="Ex: https://... ou imagens/queijo.jpg" style="padding: 8px; border: 1px solid #ccc; border-radius: 6px;">
                 
                 <label style="font-size: 13px; font-weight: bold;">Nome do Produto:</label>
                 <input type="text" id="input-prod-nome" placeholder="Ex: Queijo Minas" style="padding: 8px; border: 1px solid #ccc; border-radius: 6px;">
