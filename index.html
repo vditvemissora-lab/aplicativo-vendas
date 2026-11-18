@@ -6,7 +6,7 @@
     <title>Produtos Vargem do Itacolomi | Direto da Roça para sua Mesa</title>
     <link rel="stylesheet" href="estilo.css">
     
-    <!-- Configurações para PWA (Aplicativo na Tela Inicial) -->
+    <!-- Configurações para PWA -->
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#2e4d30">
     <script>
@@ -14,6 +14,42 @@
         navigator.serviceWorker.register('sw.js');
       }
     </script>
+    <style>
+        /* Estilo do Botão Flutuante do Cadeado (Admin) */
+        .btn-admin-cadeado {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background-color: #2e4d30;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            font-size: 22px;
+            cursor: pointer;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+            z-index: 9999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: transform 0.2s;
+        }
+        .btn-admin-cadeado:hover {
+            transform: scale(1.1);
+        }
+        /* Oculta elementos administrativos por padrão */
+        .admin-only {
+            display: none !important;
+        }
+        /* Quando logado como admin, exibe os botões de controle */
+        body.modo-admin .admin-only {
+            display: inline-block !important;
+        }
+        body.modo-admin .card-produto-item {
+            border: 2px dashed #2e4d30;
+        }
+    </style>
 </head>
 <body>
     <main class="main-container">
@@ -32,7 +68,7 @@
             <h2 class="titulo-secao">🧀 Nossos Produtos</h2>
             <p class="texto-descricao-centro">Clique em "Detalhes" para ver a descrição completa ou adicione direto.</p>
             
-            <div class="grid-produtos">
+            <div class="grid-produtos" id="grid-produtos">
                 
                 <!-- 1. Queijo Fresco -->
                 <div class="card-produto-item" data-nome="Queijo Fresco" data-preco="22.00" data-desc="Queijo fresquinho e caseiro, feito de forma artesanal. É um queijo macio, do dia, ideal para comer a qualquer hora e acompanhar um bom café." data-img="🧀" data-disponivel="true">
@@ -45,7 +81,7 @@
                     <div class="prod-botoes">
                         <button type="button" class="btn-detalhes" onclick="abrirDetalhes(this)">Detalhes</button>
                         <button type="button" class="btn-add-rapido" onclick="adicionarDireto(this)">+ Adicionar</button>
-                        <button type="button" class="btn-toggle-disp" onclick="alternarDisponibilidade(this)">Indisponibilizar</button>
+                        <button type="button" class="btn-toggle-disp admin-only" onclick="alternarDisponibilidade(this)">Indisponibilizar</button>
                     </div>
                 </div>
 
@@ -60,7 +96,7 @@
                     <div class="prod-botoes">
                         <button type="button" class="btn-detalhes" onclick="abrirDetalhes(this)">Detalhes</button>
                         <button type="button" class="btn-add-rapido" onclick="adicionarDireto(this)">+ Adicionar</button>
-                        <button type="button" class="btn-toggle-disp" onclick="alternarDisponibilidade(this)">Indisponibilizar</button>
+                        <button type="button" class="btn-toggle-disp admin-only" onclick="alternarDisponibilidade(this)">Indisponibilizar</button>
                     </div>
                 </div>
 
@@ -75,7 +111,7 @@
                     <div class="prod-botoes">
                         <button type="button" class="btn-detalhes" onclick="abrirDetalhes(this)">Detalhes</button>
                         <button type="button" class="btn-add-rapido" onclick="adicionarDireto(this)">+ Adicionar</button>
-                        <button type="button" class="btn-toggle-disp" onclick="alternarDisponibilidade(this)">Indisponibilizar</button>
+                        <button type="button" class="btn-toggle-disp admin-only" onclick="alternarDisponibilidade(this)">Indisponibilizar</button>
                     </div>
                 </div>
 
@@ -90,7 +126,7 @@
                     <div class="prod-botoes">
                         <button type="button" class="btn-detalhes" onclick="abrirDetalhes(this)">Detalhes</button>
                         <button type="button" class="btn-add-rapido" onclick="adicionarDireto(this)">+ Adicionar</button>
-                        <button type="button" class="btn-toggle-disp" onclick="alternarDisponibilidade(this)">Indisponibilizar</button>
+                        <button type="button" class="btn-toggle-disp admin-only" onclick="alternarDisponibilidade(this)">Indisponibilizar</button>
                     </div>
                 </div>
 
@@ -105,7 +141,7 @@
                     <div class="prod-botoes">
                         <button type="button" class="btn-detalhes" onclick="abrirDetalhes(this)">Detalhes</button>
                         <button type="button" class="btn-add-rapido" onclick="adicionarDireto(this)">+ Adicionar</button>
-                        <button type="button" class="btn-toggle-disp" onclick="alternarDisponibilidade(this)">Indisponibilizar</button>
+                        <button type="button" class="btn-toggle-disp admin-only" onclick="alternarDisponibilidade(this)">Indisponibilizar</button>
                     </div>
                 </div>
 
@@ -120,7 +156,7 @@
                     <div class="prod-botoes">
                         <button type="button" class="btn-detalhes" onclick="abrirDetalhes(this)">Detalhes</button>
                         <button type="button" class="btn-add-rapido" onclick="adicionarDireto(this)">+ Adicionar</button>
-                        <button type="button" class="btn-toggle-disp" onclick="alternarDisponibilidade(this)">Indisponibilizar</button>
+                        <button type="button" class="btn-toggle-disp admin-only" onclick="alternarDisponibilidade(this)">Indisponibilizar</button>
                     </div>
                 </div>
 
@@ -135,7 +171,7 @@
                     <div class="prod-botoes">
                         <button type="button" class="btn-detalhes" onclick="abrirDetalhes(this)">Detalhes</button>
                         <button type="button" class="btn-add-rapido" onclick="adicionarDireto(this)">+ Adicionar</button>
-                        <button type="button" class="btn-toggle-disp" onclick="alternarDisponibilidade(this)">Indisponibilizar</button>
+                        <button type="button" class="btn-toggle-disp admin-only" onclick="alternarDisponibilidade(this)">Indisponibilizar</button>
                     </div>
                 </div>
 
@@ -150,7 +186,7 @@
                     <div class="prod-botoes">
                         <button type="button" class="btn-detalhes" onclick="abrirDetalhes(this)">Detalhes</button>
                         <button type="button" class="btn-add-rapido" onclick="adicionarDireto(this)">+ Adicionar</button>
-                        <button type="button" class="btn-toggle-disp" onclick="alternarDisponibilidade(this)">Indisponibilizar</button>
+                        <button type="button" class="btn-toggle-disp admin-only" onclick="alternarDisponibilidade(this)">Indisponibilizar</button>
                     </div>
                 </div>
 
@@ -165,7 +201,7 @@
                     <div class="prod-botoes">
                         <button type="button" class="btn-detalhes" onclick="abrirDetalhes(this)">Detalhes</button>
                         <button type="button" class="btn-add-rapido" onclick="adicionarDireto(this)">+ Adicionar</button>
-                        <button type="button" class="btn-toggle-disp" onclick="alternarDisponibilidade(this)">Indisponibilizar</button>
+                        <button type="button" class="btn-toggle-disp admin-only" onclick="alternarDisponibilidade(this)">Indisponibilizar</button>
                     </div>
                 </div>
 
@@ -180,7 +216,7 @@
                     <div class="prod-botoes">
                         <button type="button" class="btn-detalhes" onclick="abrirDetalhes(this)">Detalhes</button>
                         <button type="button" class="btn-add-rapido" onclick="adicionarDireto(this)">+ Adicionar</button>
-                        <button type="button" class="btn-toggle-disp" onclick="alternarDisponibilidade(this)">Indisponibilizar</button>
+                        <button type="button" class="btn-toggle-disp admin-only" onclick="alternarDisponibilidade(this)">Indisponibilizar</button>
                     </div>
                 </div>
 
@@ -195,7 +231,7 @@
                     <div class="prod-botoes">
                         <button type="button" class="btn-detalhes" onclick="abrirDetalhes(this)">Detalhes</button>
                         <button type="button" class="btn-add-rapido" onclick="adicionarDireto(this)">+ Adicionar</button>
-                        <button type="button" class="btn-toggle-disp" onclick="alternarDisponibilidade(this)">Indisponibilizar</button>
+                        <button type="button" class="btn-toggle-disp admin-only" onclick="alternarDisponibilidade(this)">Indisponibilizar</button>
                     </div>
                 </div>
 
@@ -213,7 +249,7 @@
                 <strong id="valor-total">R$ 0,00</strong>
             </div>
 
-            <!-- Identificação do Cliente (Apenas Nome) -->
+            <!-- Identificação do Cliente -->
             <div id="container-cliente" style="display: none; margin-top: 15px; display: flex; flex-direction: column; gap: 8px;">
                 <label for="input-nome" style="font-size: 14px; font-weight: bold; color: #2e4d30;">Seu Nome:</label>
                 <input type="text" id="input-nome" placeholder="Digite seu nome completo" style="padding: 10px; border: 1px solid #ccc; border-radius: 8px; font-size: 14px;">
@@ -225,6 +261,9 @@
         </div>
 
     </main>
+
+    <!-- Botão Flutuante do Cadeado (Admin) no Canto Inferior Direito -->
+    <button type="button" class="btn-admin-cadeado" onclick="solicitarSenhaAdmin()" title="Área do Administrador">🔒</button>
 
     <!-- Modal de Detalhes do Produto -->
     <div id="modal-detalhes" class="modal-fundo" style="display: none;">
@@ -253,8 +292,35 @@
         let carrinho = {};
         let produtoAtual = null;
         let qtdModal = 1;
+        let isAdmin = false;
+
+        // Senha de Administrador (pode alterar aqui se quiser)
+        const SENHA_ADMIN = "1234";
+
+        function solicitarSenhaAdmin() {
+            if (isAdmin) {
+                if (confirm("Deseja sair do modo administrador?")) {
+                    isAdmin = false;
+                    document.body.classList.remove('modo-admin');
+                    document.querySelector('.btn-admin-cadeado').innerText = '🔒';
+                    alert("Modo administrador encerrado.");
+                }
+                return;
+            }
+
+            const senhaDigitada = prompt("Digite a senha de administrador:");
+            if (senhaDigitada === SENHA_ADMIN) {
+                isAdmin = true;
+                document.body.classList.add('modo-admin');
+                document.querySelector('.btn-admin-cadeado').innerText = '🔓';
+                alert("Acesso autorizado! Agora você pode gerenciar a disponibilidade dos produtos.");
+            } else if (senhaDigitada !== null) {
+                alert("Senha incorreta!");
+            }
+        }
 
         function alternarDisponibilidade(botao) {
+            if (!isAdmin) return;
             const card = botao.closest('.card-produto-item');
             const disponivel = card.getAttribute('data-disponivel') === 'true';
             const statusTexto = card.querySelector('.status-texto');
@@ -284,145 +350,4 @@
             produtoAtual = {
                 nome: card.getAttribute('data-nome'),
                 preco: parseFloat(card.getAttribute('data-preco')),
-                desc: card.getAttribute('data-desc'),
-                img: card.getAttribute('data-img'),
-                disponivel: disponivel
-            };
-
-            document.getElementById('modal-icone').innerText = produtoAtual.img;
-            document.getElementById('modal-titulo').innerText = produtoAtual.nome;
-            document.getElementById('modal-preco').innerText = `R$ ${produtoAtual.preco.toFixed(2).replace('.', ',')}`;
-            document.getElementById('modal-descricao').innerText = produtoAtual.desc;
-            
-            const btnModalAdd = document.getElementById('btn-modal-add');
-            if (!disponivel) {
-                btnModalAdd.innerText = 'Produto Esgotado';
-                btnModalAdd.style.backgroundColor = '#ccc';
-                btnModalAdd.disabled = true;
-            } else {
-                btnModalAdd.innerText = 'Adicionar ao Carrinho';
-                btnModalAdd.style.backgroundColor = '#25d366';
-                btnModalAdd.disabled = false;
-            }
-
-            qtdModal = 1;
-            document.getElementById('modal-qtd').innerText = qtdModal;
-            document.getElementById('modal-detalhes').style.display = 'flex';
-        }
-
-        function fecharDetalhes() {
-            document.getElementById('modal-detalhes').style.display = 'none';
-        }
-
-        function alterarQtdModal(valor) {
-            qtdModal += valor;
-            if (qtdModal < 1) qtdModal = 1;
-            document.getElementById('modal-qtd').innerText = qtdModal;
-        }
-
-        function adicionarDireto(botao) {
-            const card = botao.closest('.card-produto-item');
-            if (card.getAttribute('data-disponivel') !== 'true') return;
-
-            const nome = card.getAttribute('data-nome');
-            const preco = parseFloat(card.getAttribute('data-preco'));
-            
-            adicionarAoCarrinho(nome, preco, 1);
-        }
-
-        function adicionarDoModalAoCarrinho() {
-            if (produtoAtual && produtoAtual.disponivel) {
-                adicionarAoCarrinho(produtoAtual.nome, produtoAtual.preco, qtdModal);
-                fecharDetalhes();
-            }
-        }
-
-        function adicionarAoCarrinho(nome, preco, qtd) {
-            if (carrinho[nome]) {
-                carrinho[nome].qtd += qtd;
-            } else {
-                carrinho[nome] = { preco: preco, qtd: qtd };
-            }
-            atualizarCarrinhoVisual();
-        }
-
-        function alterarQtdCarrinho(nome, valor) {
-            carrinho[nome].qtd += valor;
-            if (carrinho[nome].qtd <= 0) {
-                delete carrinho[nome];
-            }
-            atualizarCarrinhoVisual();
-        }
-
-        function atualizarCarrinhoVisual() {
-            const lista = document.getElementById('lista-carrinho-itens');
-            const avisoVazio = document.getElementById('lista-carrinho-vazia');
-            const containerTotal = document.getElementById('container-total');
-            const containerCliente = document.getElementById('container-cliente');
-            const btnWhatsapp = document.getElementById('btn-enviar-whatsapp');
-            
-            lista.innerHTML = '';
-            let total = 0;
-            let temItens = false;
-
-            for (let nome in carrinho) {
-                temItens = true;
-                const item = carrinho[nome];
-                const subtotal = item.preco * item.qtd;
-                total += subtotal;
-
-                const li = document.createElement('li');
-                li.className = 'carrinho-item-linha';
-                li.innerHTML = `
-                    <span>${nome} (R$ ${item.preco.toFixed(2).replace('.', ',')})</span>
-                    <div class="carrinho-controles-qtd">
-                        <button type="button" onclick="alterarQtdCarrinho('${nome}', -1)">-</button>
-                        <span>${item.qtd}</span>
-                        <button type="button" onclick="alterarQtdCarrinho('${nome}', 1)">+</button>
-                    </div>
-                `;
-                lista.appendChild(li);
-            }
-
-            if (temItens) {
-                avisoVazio.style.display = 'none';
-                containerTotal.style.display = 'flex';
-                containerCliente.style.display = 'flex';
-                btnWhatsapp.style.display = 'block';
-                document.getElementById('valor-total').innerText = `R$ ${total.toFixed(2).replace('.', ',')}`;
-            } else {
-                avisoVazio.style.display = 'block';
-                containerTotal.style.display = 'none';
-                containerCliente.style.display = 'none';
-                btnWhatsapp.style.display = 'none';
-            }
-        }
-
-        function enviarPedidoWhatsApp() {
-            const nomeCliente = document.getElementById('input-nome').value.trim();
-
-            let mensagem = "Olá! Gostaria de fazer o seguinte pedido dos Produtos Vargem do Itacolomi:\n\n";
-            
-            if (nomeCliente) {
-                mensagem += `*Cliente:* ${nomeCliente}\n\n`;
-            }
-
-            mensagem += `*Itens do Pedido:*\n`;
-            let totalGeral = 0;
-
-            for (let nome in carrinho) {
-                const item = carrinho[nome];
-                const subtotal = item.preco * item.qtd;
-                totalGeral += subtotal;
-                mensagem += `• ${item.qtd}x ${nome} - R$ ${subtotal.toFixed(2).replace('.', ',')}\n`;
-            }
-
-            mensagem += `\n*Total Estimado: R$ ${totalGeral.toFixed(2).replace('.', ',')}*\n\nComo procedemos com a entrega e pagamento?`;
-
-            const numeroWhatsApp = "5531982477418";
-            const url = `https://wa.me/${numeroWhatsApp}?text=${encodeURIComponent(mensagem)}`;
-            window.open(url, '_blank');
-        }
-    </script>
-</body>
-</html>
+                desc: card.getAtt
