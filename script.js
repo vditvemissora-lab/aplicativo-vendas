@@ -3,13 +3,13 @@ let produtoAtual = null;
 let qtdModal = 1;
 let isAdmin = false;
 
-// Produtos Iniciais padrão caso seja o primeiro acesso
+// Produtos Iniciais padrão com suporte a fotos
 const produtosIniciais = [
-    { id: 1, nome: "Queijo Fresco", preco: 22.00, desc: "Queijo fresquinho e caseiro, feito de forma artesanal.", img: "🧀", disponivel: true },
-    { id: 2, nome: "Queijo Curado", preco: 25.00, desc: "Queijo artesanal curado, ponto de maturação ideal.", img: "🧀", disponivel: true },
-    { id: 3, nome: "Mel (500g)", preco: 16.00, desc: "Mel puro e natural, pote com 500 gramas.", img: "🍯", disponivel: true },
-    { id: 4, nome: "Leite (Pet 2L)", preco: 8.00, desc: "Leite puro de fazenda engarrafado fresco.", img: "🥛", disponivel: true },
-    { id: 5, nome: "Ovos Caipira (Pente 30)", preco: 30.00, desc: "Ovos de galinhas criadas soltas no terreiro.", img: "🥚", disponivel: true }
+    { id: 1, nome: "Queijo Fresco", preco: 22.00, desc: "Queijo fresquinho e caseiro, feito de forma artesanal.", img: "https://images.unsplash.com/photo-1486297678162-eb2a19b0a32d?w=200", disponivel: true },
+    { id: 2, nome: "Queijo Curado", preco: 25.00, desc: "Queijo artesanal curado, ponto de maturação ideal.", img: "https://images.unsplash.com/photo-1452195100486-9cc805987862?w=200", disponivel: true },
+    { id: 3, nome: "Mel (500g)", preco: 16.00, desc: "Mel puro e natural, pote com 500 gramas.", img: "https://images.unsplash.com/photo-1587049352847-4a222e784d38?w=200", disponivel: true },
+    { id: 4, nome: "Leite (Pet 2L)", preco: 8.00, desc: "Leite puro de fazenda engarrafado fresco.", img: "https://images.unsplash.com/photo-1550583724-b2692b85b150?w=200", disponivel: true },
+    { id: 5, nome: "Ovos Caipira (Pente 30)", preco: 30.00, desc: "Ovos de galinhas criadas soltas no terreiro.", img: "https://images.unsplash.com/photo-1516467508483-a7212febe31a?w=200", disponivel: true }
 ];
 
 // Carregar dados salvos ou usar padrões
@@ -41,7 +41,7 @@ function renderizarProdutos() {
         if (!prod.disponivel) div.classList.add('indisponivel');
 
         div.innerHTML = `
-            <div class="prod-icone">${prod.img}</div>
+            <img src="${prod.img}" alt="${prod.nome}" class="prod-foto" onerror="this.src='https://via.placeholder.com/65?text=Foto'">
             <div class="prod-info-rapida">
                 <h3>${prod.nome}</h3>
                 <span class="preco">R$ ${prod.preco.toFixed(2).replace('.', ',')}</span>
@@ -133,7 +133,7 @@ function fecharModalProduto() {
 
 function salvarProduto() {
     const id = document.getElementById('edit-prod-id').value;
-    const img = document.getElementById('input-prod-icone').value.trim() || "📦";
+    const img = document.getElementById('input-prod-icone').value.trim() || "https://via.placeholder.com/150?text=Produto";
     const nome = document.getElementById('input-prod-nome').value.trim();
     const preco = parseFloat(document.getElementById('input-prod-preco').value);
     const desc = document.getElementById('input-prod-desc').value.trim();
@@ -144,7 +144,6 @@ function salvarProduto() {
     }
 
     if (id) {
-        // Editando
         const prod = listaProdutos.find(p => p.id == id);
         if (prod) {
             prod.img = img;
@@ -153,7 +152,6 @@ function salvarProduto() {
             prod.desc = desc;
         }
     } else {
-        // Criando novo
         const novoId = listaProdutos.length > 0 ? Math.max(...listaProdutos.map(p => p.id)) + 1 : 1;
         listaProdutos.push({
             id: novoId,
@@ -209,7 +207,7 @@ function abrirDetalhes(id) {
     if (!prod) return;
 
     produtoAtual = prod;
-    document.getElementById('modal-icone').innerText = prod.img;
+    document.getElementById('modal-icone').innerHTML = `<img src="${prod.img}" alt="${prod.nome}" style="width: 140px; height: 140px; object-fit: cover; border-radius: 12px; border: 1px solid #ddd;">`;
     document.getElementById('modal-titulo').innerText = prod.nome;
     document.getElementById('modal-preco').innerText = `R$ ${prod.preco.toFixed(2).replace('.', ',')}`;
     document.getElementById('modal-descricao').innerText = prod.desc;
