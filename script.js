@@ -1,19 +1,27 @@
-let carrinho = {};
+let carrinho = {}; // Guarda { idProduto: quantidade }
 let produtoAtual = null;
 let qtdModal = 1;
 let isAdmin = false;
+let isMinasGerais = true; // Padrão inicial é Minas Gerais
+let cepDigitado = "";
 
-// Produtos Iniciais padrão com suporte a fotos
+// Produtos iniciais com preço para Minas Gerais (precoMG) e Resto do Brasil (precoBR)
 const produtosIniciais = [
-    { id: 1, nome: "Queijo Fresco", preco: 22.00, desc: "Queijo fresquinho e caseiro, feito de forma artesanal.", img: "https://images.unsplash.com/photo-1486297678162-eb2a19b0a32d?w=200", disponivel: true },
-    { id: 2, nome: "Queijo Curado", preco: 25.00, desc: "Queijo artesanal curado, ponto de maturação ideal.", img: "https://images.unsplash.com/photo-1452195100486-9cc805987862?w=200", disponivel: true },
-    { id: 3, nome: "Mel (500g)", preco: 16.00, desc: "Mel puro e natural, pote com 500 gramas.", img: "https://images.unsplash.com/photo-1587049352847-4a222e784d38?w=200", disponivel: true },
-    { id: 4, nome: "Leite (Pet 2L)", preco: 8.00, desc: "Leite puro de fazenda engarrafado fresco.", img: "https://images.unsplash.com/photo-1550583724-b2692b85b150?w=200", disponivel: true },
-    { id: 5, nome: "Ovos Caipira (Pente 30)", preco: 30.00, desc: "Ovos de galinhas criadas soltas no terreiro.", img: "https://images.unsplash.com/photo-1516467508483-a7212febe31a?w=200", disponivel: true }
+    { id: 1, nome: "Queijo Fresco", precoMG: 22.00, precoBR: 28.00, desc: "Queijo fresquinho e caseiro, feito de forma artesanal.", img: "https://images.unsplash.com/photo-1486297678162-eb2a19b0a32d?w=200", disponivel: true },
+    { id: 2, nome: "Queijo Curado", precoMG: 25.00, precoBR: 32.00, desc: "Queijo artesanal curado, ponto de maturação ideal.", img: "https://images.unsplash.com/photo-1452195100486-9cc805987862?w=200", disponivel: true },
+    { id: 3, nome: "Mel (500g)", precoMG: 16.00, precoBR: 21.00, desc: "Mel puro e natural, pote com 500 gramas.", img: "https://images.unsplash.com/photo-1587049352847-4a222e784d38?w=200", disponivel: true },
+    { id: 4, nome: "Leite (Pet 2L)", precoMG: 8.00, precoBR: 12.00, desc: "Leite puro de fazenda engarrafado fresco.", img: "https://images.unsplash.com/photo-1550583724-b2692b85b150?w=200", disponivel: true },
+    { id: 5, nome: "Ovos Caipira (Pente 30)", precoMG: 30.00, precoBR: 38.00, desc: "Ovos de galinhas criadas soltas no terreiro.", img: "https://images.unsplash.com/photo-1516467508483-a7212febe31a?w=200", disponivel: true }
 ];
 
-// Carregar dados salvos ou usar padrões
-let listaProdutos = JSON.parse(localStorage.getItem('vargem_produtos')) || produtosIniciais;
+// Carregar dados salvos e garantir compatibilidade caso existam produtos da versão anterior
+let dadosSalvos = JSON.parse(localStorage.getItem('vargem_produtos'));
+let listaProdutos = dadosSalvos ? dadosSalvos.map(p => ({
+    ...p,
+    precoMG: p.precoMG !== undefined ? p.precoMG : (p.preco || 0),
+    precoBR: p.precoBR !== undefined ? p.precoBR : (p.preco || 0)
+})) : produtosIniciais;
+
 let configSite = JSON.parse(localStorage.getItem('vargem_config')) || {
     nome: "Produtos Vargem do Itacolomi",
     desc: "O verdadeiro sabor da roça levado até você. Escolha seus produtos e envie o pedido direto pelo WhatsApp.",
@@ -24,6 +32,40 @@ window.onload = function() {
     aplicarConfiguracoes();
     renderizarProdutos();
 };
+
+function obterPrecoAtivo(prod) {
+    return isMinasGerais ? prod.precoMG : prod.precoBR;
+}
+
+function mascaraEVerificarCEP(input) {
+    let valor = input.value.replace(/\D/g, '');
+    if (valor.length > 5) {
+        valor = valor.substring(0, 5) + '-' + valor.substring(5, 8);
+    }
+    input.value = valor;
+    cepDigitado = valor;
+
+    const apenasNumeros = valor.replace(/\D/g, '');
+    const badge = document.getElementById('badge-regiao');
+
+    // CEPs de Minas Gerais começam obrigatoriamente com o dígito 3 (30000-000 a 39999-999)
+    if (apenasNumeros.length === 0) {
+        isMinasGerais = true;
+        badge.innerText = "Tabela: Minas Gerais";
+        badge.className = "badge-regiao regiao-mg";
+    } else if (apenasNumeros.startsWith('3')) {
+        isMinasGerais = true;
+        badge.innerText = "✓ Minas Gerais (Preço Local)";
+        badge.className = "badge-regiao regiao-mg";
+    } else {
+        isMinasGerais = false;
+        badge.innerText = "📦 Resto do Brasil";
+        badge.className = "badge-regiao regiao-br";
+    }
+
+    renderizarProdutos();
+    atualizarCarrinhoVisual();
+}
 
 function aplicarConfiguracoes() {
     document.getElementById('topo-titulo').innerText = configSite.nome;
@@ -36,6 +78,7 @@ function renderizarProdutos() {
     grid.innerHTML = '';
 
     listaProdutos.forEach(prod => {
+        const precoExibido = obterPrecoAtivo(prod);
         const div = document.createElement('div');
         div.className = 'card-produto-item';
         if (!prod.disponivel) div.classList.add('indisponivel');
@@ -44,7 +87,8 @@ function renderizarProdutos() {
             <img src="${prod.img}" alt="${prod.nome}" class="prod-foto" onerror="this.src='https://via.placeholder.com/65?text=Foto'">
             <div class="prod-info-rapida">
                 <h3>${prod.nome}</h3>
-                <span class="preco">R$ ${prod.preco.toFixed(2).replace('.', ',')}</span>
+                <span class="preco">R$ ${precoExibido.toFixed(2).replace('.', ',')}</span>
+                <span class="preco-admin-sub admin-only">MG: R$ ${prod.precoMG.toFixed(2).replace('.', ',')} | BR: R$ ${prod.precoBR.toFixed(2).replace('.', ',')}</span>
                 <span class="status-texto" style="color: ${prod.disponivel ? '#2e4d30' : '#d9534f'}">${prod.disponivel ? 'Disponível' : 'Esgotado'}</span>
             </div>
             <div class="prod-botoes">
@@ -101,8 +145,10 @@ function excluirProduto(id) {
     if (!isAdmin) return;
     if (confirm("Tem certeza que deseja excluir este produto?")) {
         listaProdutos = listaProdutos.filter(p => p.id !== id);
+        delete carrinho[id];
         salvarBanco();
         renderizarProdutos();
+        atualizarCarrinhoVisual();
     }
 }
 
@@ -111,7 +157,8 @@ function abrirModalProduto(id = null) {
     document.getElementById('edit-prod-id').value = '';
     document.getElementById('input-prod-icone').value = '';
     document.getElementById('input-prod-nome').value = '';
-    document.getElementById('input-prod-preco').value = '';
+    document.getElementById('input-prod-preco-mg').value = '';
+    document.getElementById('input-prod-preco-br').value = '';
     document.getElementById('input-prod-desc').value = '';
 
     if (id) {
@@ -120,7 +167,8 @@ function abrirModalProduto(id = null) {
             document.getElementById('edit-prod-id').value = prod.id;
             document.getElementById('input-prod-icone').value = prod.img;
             document.getElementById('input-prod-nome').value = prod.nome;
-            document.getElementById('input-prod-preco').value = prod.preco;
+            document.getElementById('input-prod-preco-mg').value = prod.precoMG;
+            document.getElementById('input-prod-preco-br').value = prod.precoBR;
             document.getElementById('input-prod-desc').value = prod.desc;
         }
     }
@@ -135,11 +183,12 @@ function salvarProduto() {
     const id = document.getElementById('edit-prod-id').value;
     const img = document.getElementById('input-prod-icone').value.trim() || "https://via.placeholder.com/150?text=Produto";
     const nome = document.getElementById('input-prod-nome').value.trim();
-    const preco = parseFloat(document.getElementById('input-prod-preco').value);
+    const precoMG = parseFloat(document.getElementById('input-prod-preco-mg').value);
+    const precoBR = parseFloat(document.getElementById('input-prod-preco-br').value);
     const desc = document.getElementById('input-prod-desc').value.trim();
 
-    if (!nome || isNaN(preco)) {
-        alert("Preencha o nome e o preço corretamente!");
+    if (!nome || isNaN(precoMG) || isNaN(precoBR)) {
+        alert("Preencha o nome, o preço de Minas Gerais e o preço do Resto do Brasil!");
         return;
     }
 
@@ -148,7 +197,8 @@ function salvarProduto() {
         if (prod) {
             prod.img = img;
             prod.nome = nome;
-            prod.preco = preco;
+            prod.precoMG = precoMG;
+            prod.precoBR = precoBR;
             prod.desc = desc;
         }
     } else {
@@ -156,7 +206,8 @@ function salvarProduto() {
         listaProdutos.push({
             id: novoId,
             nome: nome,
-            preco: preco,
+            precoMG: precoMG,
+            precoBR: precoBR,
             desc: desc || "Produto artesanal da roça.",
             img: img,
             disponivel: true
@@ -166,6 +217,7 @@ function salvarProduto() {
     salvarBanco();
     fecharModalProduto();
     renderizarProdutos();
+    atualizarCarrinhoVisual();
 }
 
 function abrirModalConfig() {
@@ -207,9 +259,10 @@ function abrirDetalhes(id) {
     if (!prod) return;
 
     produtoAtual = prod;
+    const precoAtivo = obterPrecoAtivo(prod);
     document.getElementById('modal-icone').innerHTML = `<img src="${prod.img}" alt="${prod.nome}" style="width: 140px; height: 140px; object-fit: cover; border-radius: 12px; border: 1px solid #ddd;">`;
     document.getElementById('modal-titulo').innerText = prod.nome;
-    document.getElementById('modal-preco').innerText = `R$ ${prod.preco.toFixed(2).replace('.', ',')}`;
+    document.getElementById('modal-preco').innerText = `R$ ${precoAtivo.toFixed(2).replace('.', ',')}`;
     document.getElementById('modal-descricao').innerText = prod.desc;
     
     const btnModalAdd = document.getElementById('btn-modal-add');
@@ -241,28 +294,28 @@ function alterarQtdModal(valor) {
 function adicionarDireto(id) {
     const prod = listaProdutos.find(p => p.id === id);
     if (!prod || !prod.disponivel) return;
-    adicionarAoCarrinho(prod.nome, prod.preco, 1);
+    adicionarAoCarrinho(prod.id, 1);
 }
 
 function adicionarDoModalAoCarrinho() {
     if (produtoAtual && produtoAtual.disponivel) {
-        adicionarAoCarrinho(produtoAtual.nome, produtoAtual.preco, qtdModal);
+        adicionarAoCarrinho(produtoAtual.id, qtdModal);
         fecharDetalhes();
     }
 }
 
-function adicionarAoCarrinho(nome, preco, qtd) {
-    if (carrinho[nome]) {
-        carrinho[nome].qtd += qtd;
+function adicionarAoCarrinho(id, qtd) {
+    if (carrinho[id]) {
+        carrinho[id] += qtd;
     } else {
-        carrinho[nome] = { preco: preco, qtd: qtd };
+        carrinho[id] = qtd;
     }
     atualizarCarrinhoVisual();
 }
 
-function alterarQtdCarrinho(nome, valor) {
-    carrinho[nome].qtd += valor;
-    if (carrinho[nome].qtd <= 0) delete carrinho[nome];
+function alterarQtdCarrinho(id, valor) {
+    carrinho[id] += valor;
+    if (carrinho[id] <= 0) delete carrinho[id];
     atualizarCarrinhoVisual();
 }
 
@@ -276,19 +329,23 @@ function atualizarCarrinhoVisual() {
     lista.innerHTML = '';
     let total = 0, temItens = false;
 
-    for (let nome in carrinho) {
+    for (let id in carrinho) {
+        const prod = listaProdutos.find(p => p.id == id);
+        if (!prod) continue;
+
         temItens = true;
-        const item = carrinho[nome];
-        total += item.preco * item.qtd;
+        const qtd = carrinho[id];
+        const precoUnitario = obterPrecoAtivo(prod);
+        total += precoUnitario * qtd;
 
         const li = document.createElement('li');
         li.className = 'carrinho-item-linha';
         li.innerHTML = `
-            <span>${nome} (R$ ${item.preco.toFixed(2).replace('.', ',')})</span>
+            <span>${prod.nome} (R$ ${precoUnitario.toFixed(2).replace('.', ',')})</span>
             <div class="seletor-qtd">
-                <button type="button" onclick="alterarQtdCarrinho('${nome}', -1)">-</button>
-                <span>${item.qtd}</span>
-                <button type="button" onclick="alterarQtdCarrinho('${nome}', 1)">+</button>
+                <button type="button" onclick="alterarQtdCarrinho(${prod.id}, -1)">-</button>
+                <span>${qtd}</span>
+                <button type="button" onclick="alterarQtdCarrinho(${prod.id}, 1)">+</button>
             </div>
         `;
         lista.appendChild(li);
@@ -310,16 +367,24 @@ function atualizarCarrinhoVisual() {
 
 function enviarPedidoWhatsApp() {
     const nomeCliente = document.getElementById('input-nome').value.trim();
-    let mensagem = `Olá! Gostaria de fazer o seguinte pedido de *${configSite.nome}*:\n\n`;
-    if (nomeCliente) mensagem += `*Cliente:* ${nomeCliente}\n\n`;
+    const regiaoTexto = isMinasGerais ? "Minas Gerais" : "Resto do Brasil";
     
-    mensagem += `*Itens do Pedido:*\n`;
+    let mensagem = `Olá! Gostaria de fazer o seguinte pedido de *${configSite.nome}*:\n\n`;
+    if (nomeCliente) mensagem += `*Cliente:* ${nomeCliente}\n`;
+    if (cepDigitado) mensagem += `*CEP:* ${cepDigitado} (${regiaoTexto})\n`;
+    else mensagem += `*Região:* ${regiaoTexto}\n`;
+    
+    mensagem += `\n*Itens do Pedido:*\n`;
     let totalGeral = 0;
-    for (let nome in carrinho) {
-        const item = carrinho[nome];
-        const subtotal = item.preco * item.qtd;
+    for (let id in carrinho) {
+        const prod = listaProdutos.find(p => p.id == id);
+        if (!prod) continue;
+        
+        const qtd = carrinho[id];
+        const precoUnitario = obterPrecoAtivo(prod);
+        const subtotal = precoUnitario * qtd;
         totalGeral += subtotal;
-        mensagem += `• ${item.qtd}x ${nome} - R$ ${subtotal.toFixed(2).replace('.', ',')}\n`;
+        mensagem += `• ${qtd}x ${prod.nome} - R$ ${subtotal.toFixed(2).replace('.', ',')}\n`;
     }
     mensagem += `\n*Total Estimado: R$ ${totalGeral.toFixed(2).replace('.', ',')}*`;
 
