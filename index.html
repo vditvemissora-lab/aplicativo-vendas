@@ -4,10 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title id="titulo-pagina-seo">Produtos Vargem do Itacolomi</title>
-    
     <link rel="stylesheet" href="estilo.css">
-    
-    <!-- Configurações para PWA -->
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#2e4d30">
     <script>
@@ -17,82 +14,218 @@
     </script>
 </head>
 <body>
-    <main class="main-container">
+
+    <!-- TELA 1: ACESSO / LOGIN -->
+    <section id="tela-login" class="login-wrapper">
+        <div class="card-bloco card-login">
+            <span class="tag-badge-verde">🌿 ACESSO AO CATÁLOGO</span>
+            <h1 id="login-titulo-loja">Produtos Vargem do Itacolomi</h1>
+            <p class="texto-descricao">Entre para fazer seus pedidos ou gerenciar a loja.</p>
+
+            <form onsubmit="realizarLogin(event)" class="form-login">
+                <div class="campo-grupo">
+                    <label for="login-email">E-mail ou Usuário:</label>
+                    <input type="text" id="login-email" placeholder="Ex: cliente@email.com ou admin" required>
+                </div>
+
+                <div class="campo-grupo">
+                    <label for="login-senha">Senha:</label>
+                    <input type="password" id="login-senha" placeholder="Digite sua senha" required>
+                </div>
+
+                <div class="campo-grupo" id="grupo-nome-cadastro" style="display: none;">
+                    <label for="login-nome">Seu Nome Completo:</label>
+                    <input type="text" id="login-nome" placeholder="Como devemos te chamar?">
+                </div>
+
+                <label class="checkbox-lembrar">
+                    <input type="checkbox" id="login-lembrar" checked>
+                    <span>Salvar login neste dispositivo</span>
+                </label>
+
+                <button type="submit" class="btn-principal" id="btn-submit-login">Entrar</button>
+            </form>
+
+            <div class="login-alternar">
+                <button type="button" class="btn-link" id="btn-alternar-modo" onclick="alternarCadastroLogin()">
+                    Não tem conta? Criar cadastro de comprador
+                </button>
+            </div>
+
+            <div class="dica-acesso-teste">
+                <small><strong>Acesso rápido para teste:</strong><br>
+                Vendedor: <code>admin</code> / senha <code>1234</code><br>
+                Comprador: qualquer e-mail e senha (ou cadastre-se acima)</small>
+            </div>
+        </div>
+    </section>
+
+    <!-- BARRA SUPERIOR QUANDO LOGADO -->
+    <header id="barra-usuario" class="barra-topo-logado" style="display: none;">
+        <div class="barra-conteudo">
+            <div>
+                <strong id="usuario-logado-nome">Usuário</strong>
+                <span id="usuario-logado-perfil" class="pill-perfil">Comprador</span>
+            </div>
+            <button type="button" class="btn-sair" onclick="sairDaConta()">Sair</button>
+        </div>
+    </header>
+
+    <!-- TELA 2: PERFIL DO COMPRADOR -->
+    <main id="area-comprador" class="main-container" style="display: none;">
         
-        <!-- Topo / Apresentação -->
-        <div class="card-bloco card-topo" id="bloco-topo">
-            <span class="tag-badge" id="topo-badge">🌿 TRADIÇÃO E QUALIDADE ARTESANAL</span>
+        <div class="card-bloco card-topo">
+            <span class="tag-badge">🌿 TRADIÇÃO E QUALIDADE ARTESANAL</span>
             <h1 id="topo-titulo">Produtos Vargem do Itacolomi</h1>
             <p class="texto-descricao" id="topo-descricao" style="color: #e8f5e9;">
-                O verdadeiro sabor da roça levado até você. Escolha seus produtos e envie o pedido direto pelo WhatsApp.
+                Escolha seus produtos, acompanhe o envio e confirme o recebimento direto por aqui.
             </p>
         </div>
 
-        <!-- Painel do Administrador (Aparece ao logar) -->
-        <div class="card-bloco admin-only" style="background: #eef4ee; border: 2px dashed #2e4d30; text-align: center;">
-            <h3 style="color: #2e4d30; margin-top: 0;">⚙️ Painel do Administrador</h3>
-            <div style="display: flex; gap: 10px; justify-content: center; flex-wrap: wrap;">
-                <button type="button" class="btn-add-rapido" onclick="abrirModalProduto()">➕ Adicionar Novo Produto</button>
-                <button type="button" class="btn-detalhes" onclick="abrirModalConfig()">✏️ Editar Textos / Senha</button>
-            </div>
-        </div>
-
-        <!-- Seletor de CEP para Precificação Regional -->
-        <div class="card-bloco bloco-cep">
-            <label for="input-cep-cliente" style="font-weight: bold; color: #2e4d30; display: block; margin-bottom: 6px;">
-                📍 Digite seu CEP para calcular os preços da sua região:
-            </label>
-            <div class="cep-input-grupo">
-                <input type="text" id="input-cep-cliente" placeholder="00000-000" maxlength="9" oninput="mascaraEVerificarCEP(this)">
-                <span id="badge-regiao" class="badge-regiao regiao-mg">Tabela: Minas Gerais</span>
-            </div>
-        </div>
-
-        <!-- Vitrine de Produtos -->
-        <div class="card-bloco">
-            <h2 class="titulo-secao">🧀 Nossos Produtos</h2>
-            <p class="texto-descricao-centro">Clique em "Detalhes" para ver a descrição completa ou adicione direto.</p>
-            
-            <div class="grid-produtos" id="grid-produtos">
-                <!-- Os produtos serão carregados automaticamente aqui pelo script -->
-            </div>
-        </div>
-
-        <!-- Seção do Carrinho e Envio -->
-        <div class="card-bloco card-carrinho" id="secao-carrinho">
-            <h2 class="titulo-secao">🛒 Seu Carrinho de Pedidos</h2>
-            <div id="lista-carrinho-vazia" class="texto-descricao-centro">O carrinho está vazio. Escolha os produtos acima.</div>
-            <ul id="lista-carrinho-itens" class="carrinho-itens"></ul>
-            
-            <div id="container-total" class="carrinho-total" style="display: none;">
-                <span>Total estimado:</span>
-                <strong id="valor-total">R$ 0,00</strong>
-            </div>
-
-            <div id="container-cliente" style="display: none; margin-top: 15px; flex-direction: column; gap: 8px;">
-                <label for="input-nome" style="font-size: 14px; font-weight: bold; color: #2e4d30;">Seu Nome:</label>
-                <input type="text" id="input-nome" placeholder="Digite seu nome completo" style="padding: 10px; border: 1px solid #ccc; border-radius: 8px; font-size: 14px;">
-            </div>
-
-            <button type="button" id="btn-enviar-whatsapp" class="btn-whatsapp" style="display: none;" onclick="enviarPedidoWhatsApp()">
-                📱 Enviar Pedido para o WhatsApp
+        <!-- Abas do Comprador: Vitrine vs Meus Pedidos -->
+        <div class="abas-navegacao">
+            <button type="button" class="aba-btn ativa" id="tab-comp-vitrine" onclick="mudarAbaComprador('vitrine')">🛍️ Catálogo</button>
+            <button type="button" class="aba-btn" id="tab-comp-pedidos" onclick="mudarAbaComprador('pedidos')">
+                📦 Meus Pedidos <span id="badge-pedidos-cliente" class="contador-aba" style="display:none;">0</span>
             </button>
+        </div>
+
+        <!-- Sub-tela Comprador: Vitrine -->
+        <div id="sub-comprador-vitrine">
+            <!-- CEP discreto -->
+            <div class="card-bloco bloco-cep">
+                <label for="input-cep-cliente" style="font-weight: bold; color: #2e4d30; display: block; margin-bottom: 6px;">
+                    📍 Informe seu CEP para disponibilidade e envio:
+                </label>
+                <div class="cep-input-grupo">
+                    <input type="text" id="input-cep-cliente" placeholder="00000-000" maxlength="9" oninput="mascaraEVerificarCEP(this)">
+                    <span id="status-cep-discreto" class="texto-cep-status"></span>
+                </div>
+            </div>
+
+            <!-- Lista de Produtos -->
+            <div class="card-bloco">
+                <h2 class="titulo-secao">🧀 Produtos Disponíveis</h2>
+                <div class="grid-produtos" id="grid-produtos"></div>
+            </div>
+
+            <!-- Carrinho -->
+            <div class="card-bloco card-carrinho" id="secao-carrinho">
+                <h2 class="titulo-secao">🛒 Seu Carrinho</h2>
+                <div id="lista-carrinho-vazia" class="texto-descricao-centro">O carrinho está vazio.</div>
+                <ul id="lista-carrinho-itens" class="carrinho-itens"></ul>
+                
+                <div id="container-total" class="carrinho-total" style="display: none;">
+                    <span>Total do pedido:</span>
+                    <strong id="valor-total">R$ 0,00</strong>
+                </div>
+
+                <div id="container-entrega" style="display: none; margin-top: 15px; flex-direction: column; gap: 8px;">
+                    <label for="input-endereco" style="font-size: 13px; font-weight: bold; color: #2e4d30;">Endereço completo para entrega:</label>
+                    <input type="text" id="input-endereco" placeholder="Rua, número, bairro e cidade" class="input-padrao">
+                    
+                    <label for="input-telefone" style="font-size: 13px; font-weight: bold; color: #2e4d30;">Telefone / WhatsApp para contato:</label>
+                    <input type="text" id="input-telefone" placeholder="(31) 99999-9999" class="input-padrao">
+                </div>
+
+                <button type="button" id="btn-finalizar-pedido" class="btn-principal" style="display: none; margin-top: 12px;" onclick="finalizarPedidoNoSite()">
+                    ✅ Finalizar Pedido no Site
+                </button>
+            </div>
+        </div>
+
+        <!-- Sub-tela Comprador: Meus Pedidos -->
+        <div id="sub-comprador-pedidos" style="display: none;">
+            <div class="card-bloco">
+                <h2 class="titulo-secao">📦 Acompanhamento dos Meus Pedidos</h2>
+                <div id="lista-pedidos-comprador" class="lista-pedidos-cards"></div>
+            </div>
         </div>
 
     </main>
 
-    <!-- Botão Flutuante do Cadeado (Admin) -->
-    <button type="button" class="btn-admin-cadeado" onclick="solicitarSenhaAdmin()" title="Área do Administrador">🔒</button>
+    <!-- TELA 3: PERFIL DO VENDEDOR / ADMINISTRADOR -->
+    <main id="area-vendedor" class="main-container" style="display: none;">
+        
+        <div class="card-bloco card-topo-admin">
+            <span class="tag-badge">⚙️ PAINEL DO VENDEDOR</span>
+            <h1 id="admin-titulo-loja">Gestão da Loja</h1>
+            <p style="font-size: 13px; margin: 5px 0 0 0; opacity: 0.9;">Controle de pedidos, envios, avaliações e catálogo.</p>
+        </div>
 
-    <!-- Modal de Detalhes -->
+        <!-- Abas Principais do Vendedor -->
+        <div class="abas-navegacao">
+            <button type="button" class="aba-btn ativa" id="tab-vend-pedidos" onclick="mudarAbaVendedor('pedidos')">📋 Pedidos</button>
+            <button type="button" class="aba-btn" id="tab-vend-produtos" onclick="mudarAbaVendedor('produtos')">🧀 Produtos</button>
+            <button type="button" class="aba-btn" id="tab-vend-avaliacoes" onclick="mudarAbaVendedor('avaliacoes')">⭐ Avaliações</button>
+            <button type="button" class="aba-btn" id="tab-vend-config" onclick="mudarAbaVendedor('config')">🔧 Loja</button>
+        </div>
+
+        <!-- Aba Vendedor 1: Pedidos por Status -->
+        <div id="sub-vendedor-pedidos">
+            <div class="filtros-status">
+                <button type="button" class="filtro-btn ativo" id="filtro-pendente" onclick="filtrarPedidosVendedor('pendente')">
+                    ⏳ Pendentes (<span id="cont-pendente">0</span>)
+                </button>
+                <button type="button" class="filtro-btn" id="filtro-envio" onclick="filtrarPedidosVendedor('envio')">
+                    🚚 Em fase de envio (<span id="cont-envio">0</span>)
+                </button>
+                <button type="button" class="filtro-btn" id="filtro-concluido" onclick="filtrarPedidosVendedor('concluido')">
+                    ✅ Concluídos (<span id="cont-concluido">0</span>)
+                </button>
+            </div>
+
+            <div id="lista-pedidos-vendedor" class="lista-pedidos-cards"></div>
+        </div>
+
+        <!-- Aba Vendedor 2: Catálogo de Produtos -->
+        <div id="sub-vendedor-produtos" style="display: none;">
+            <div class="card-bloco">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                    <h2 class="titulo-secao" style="margin: 0;">Produtos Cadastrados</h2>
+                    <button type="button" class="btn-add-rapido" onclick="abrirModalProduto()">➕ Novo Produto</button>
+                </div>
+                <div id="grid-produtos-admin" class="grid-produtos"></div>
+            </div>
+        </div>
+
+        <!-- Aba Vendedor 3: Avaliações Recebidas -->
+        <div id="sub-vendedor-avaliacoes" style="display: none;">
+            <div class="card-bloco">
+                <h2 class="titulo-secao">⭐ Avaliações dos Compradores</h2>
+                <div id="lista-avaliacoes-vendedor" class="lista-pedidos-cards"></div>
+            </div>
+        </div>
+
+        <!-- Aba Vendedor 4: Configurações da Loja -->
+        <div id="sub-vendedor-config" style="display: none;">
+            <div class="card-bloco">
+                <h2 class="titulo-secao">🔧 Configurações Gerais</h2>
+                <div style="display: flex; flex-direction: column; gap: 10px;">
+                    <label style="font-size: 13px; font-weight: bold;">Nome do Estabelecimento:</label>
+                    <input type="text" id="conf-nome-site" class="input-padrao">
+
+                    <label style="font-size: 13px; font-weight: bold;">Descrição da Vitrine:</label>
+                    <textarea id="conf-desc-site" class="input-padrao" style="height: 60px;"></textarea>
+
+                    <label style="font-size: 13px; font-weight: bold;">Alterar Senha do Vendedor:</label>
+                    <input type="password" id="conf-nova-senha" placeholder="Deixe em branco para manter a atual" class="input-padrao">
+
+                    <button type="button" class="btn-principal" onclick="salvarConfiguracoes()">Salvar Configurações</button>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- MODAL: DETALHES DO PRODUTO (COMPRADOR) -->
     <div id="modal-detalhes" class="modal-fundo" style="display: none;">
         <div class="modal-conteudo">
             <span class="modal-fechar" onclick="fecharDetalhes()">&times;</span>
             <div id="modal-icone" style="margin-bottom: 10px;"></div>
-            <h2 id="modal-titulo">Nome do Produto</h2>
+            <h2 id="modal-titulo">Produto</h2>
             <p id="modal-preco" class="modal-preco-destaque">R$ 0,00</p>
-            <p id="modal-descricao" class="modal-texto-desc">Descrição...</p>
-            
+            <p id="modal-descricao" class="modal-texto-desc"></p>
             <div class="modal-controle-qtd">
                 <span>Quantidade:</span>
                 <div class="seletor-qtd">
@@ -101,64 +234,59 @@
                     <button type="button" onclick="alterarQtdModal(1)">+</button>
                 </div>
             </div>
-
-            <button type="button" class="btn-whatsapp" id="btn-modal-add" onclick="adicionarDoModalAoCarrinho()">Adicionar ao Carrinho</button>
+            <button type="button" class="btn-principal" id="btn-modal-add" onclick="adicionarDoModalAoCarrinho()">Adicionar ao Carrinho</button>
         </div>
     </div>
 
-    <!-- Modal para Adicionar/Editar Produto (Admin) -->
+    <!-- MODAL: ADICIONAR / EDITAR PRODUTO (VENDEDOR) -->
     <div id="modal-produto" class="modal-fundo" style="display: none;">
         <div class="modal-conteudo">
             <span class="modal-fechar" onclick="fecharModalProduto()">&times;</span>
             <h2 style="color: #2e4d30; margin-top: 0;">Gerenciar Produto</h2>
             <input type="hidden" id="edit-prod-id">
-            
             <div style="text-align: left; display: flex; flex-direction: column; gap: 8px; margin-bottom: 15px;">
                 <label style="font-size: 13px; font-weight: bold;">Link ou Caminho da Foto:</label>
-                <input type="text" id="input-prod-icone" placeholder="Ex: https://... ou imagens/queijo.jpg" style="padding: 8px; border: 1px solid #ccc; border-radius: 6px;">
-                
+                <input type="text" id="input-prod-icone" placeholder="https://... ou imagens/foto.jpg" class="input-padrao">
+
                 <label style="font-size: 13px; font-weight: bold;">Nome do Produto:</label>
-                <input type="text" id="input-prod-nome" placeholder="Ex: Queijo Minas" style="padding: 8px; border: 1px solid #ccc; border-radius: 6px;">
-                
+                <input type="text" id="input-prod-nome" placeholder="Ex: Queijo Minas" class="input-padrao">
+
                 <div style="display: flex; gap: 10px;">
-                    <div style="flex: 1; display: flex; flex-direction: column; gap: 4px;">
-                        <label style="font-size: 12px; font-weight: bold; color: #2e4d30;">Preço Minas Gerais (R$):</label>
-                        <input type="number" step="0.01" id="input-prod-preco-mg" placeholder="Ex: 22.00" style="padding: 8px; border: 1px solid #2e4d30; border-radius: 6px; width: 100%; box-sizing: border-box;">
+                    <div style="flex: 1;">
+                        <label style="font-size: 12px; font-weight: bold; color: #2e4d30;">Preço Local / MG (R$):</label>
+                        <input type="number" step="0.01" id="input-prod-preco-mg" class="input-padrao">
                     </div>
-                    <div style="flex: 1; display: flex; flex-direction: column; gap: 4px;">
-                        <label style="font-size: 12px; font-weight: bold; color: #b85d19;">Preço Resto do Brasil (R$):</label>
-                        <input type="number" step="0.01" id="input-prod-preco-br" placeholder="Ex: 28.00" style="padding: 8px; border: 1px solid #b85d19; border-radius: 6px; width: 100%; box-sizing: border-box;">
+                    <div style="flex: 1;">
+                        <label style="font-size: 12px; font-weight: bold; color: #b85d19;">Preço Demais Estados (R$):</label>
+                        <input type="number" step="0.01" id="input-prod-preco-br" class="input-padrao">
                     </div>
                 </div>
-                
-                <label style="font-size: 13px; font-weight: bold;">Descrição:</label>
-                <textarea id="input-prod-desc" placeholder="Detalhes do produto..." style="padding: 8px; border: 1px solid #ccc; border-radius: 6px; height: 60px;"></textarea>
-            </div>
 
-            <button type="button" class="btn-add-rapido" style="width: 100%; padding: 10px;" onclick="salvarProduto()">Salvar Produto</button>
+                <label style="font-size: 13px; font-weight: bold;">Descrição:</label>
+                <textarea id="input-prod-desc" class="input-padrao" style="height: 60px;"></textarea>
+            </div>
+            <button type="button" class="btn-principal" onclick="salvarProduto()">Salvar Produto</button>
         </div>
     </div>
 
-    <!-- Modal de Configurações do Site e Senha (Admin) -->
-    <div id="modal-config" class="modal-fundo" style="display: none;">
+    <!-- MODAL: AVALIAR PEDIDO APÓS RECEBIMENTO (COMPRADOR) -->
+    <div id="modal-avaliacao" class="modal-fundo" style="display: none;">
         <div class="modal-conteudo">
-            <span class="modal-fechar" onclick="fecharModalConfig()">&times;</span>
-            <h2 style="color: #2e4d30; margin-top: 0;">Configurações</h2>
-            
-            <div style="text-align: left; display: flex; flex-direction: column; gap: 8px; margin-bottom: 15px;">
-                <label style="font-size: 13px; font-weight: bold;">Nome do Estabelecimento:</label>
-                <input type="text" id="conf-nome-site" style="padding: 8px; border: 1px solid #ccc; border-radius: 6px;">
-                
-                <label style="font-size: 13px; font-weight: bold;">Descrição Principal:</label>
-                <textarea id="conf-desc-site" style="padding: 8px; border: 1px solid #ccc; border-radius: 6px; height: 50px;"></textarea>
-                
-                <hr style="border: 0; border-top: 1px solid #ddd; margin: 10px 0;">
-                
-                <label style="font-size: 13px; font-weight: bold;">Nova Senha de Administrador:</label>
-                <input type="password" id="conf-nova-senha" placeholder="Deixe em branco para não alterar" style="padding: 8px; border: 1px solid #ccc; border-radius: 6px;">
+            <span class="modal-fechar" onclick="fecharModalAvaliacao()">&times;</span>
+            <h2 style="color: #2e4d30; margin-top: 0;">⭐ Avaliar Pedido</h2>
+            <p style="font-size: 13px; color: #666;">Recebimento confirmado! Conte como foi sua experiência com os produtos e a entrega.</p>
+            <input type="hidden" id="aval-pedido-id">
+
+            <div class="estrelas-seletor" id="estrelas-seletor">
+                <span onclick="selecionarNota(1)" data-nota="1">★</span>
+                <span onclick="selecionarNota(2)" data-nota="2">★</span>
+                <span onclick="selecionarNota(3)" data-nota="3">★</span>
+                <span onclick="selecionarNota(4)" data-nota="4">★</span>
+                <span onclick="selecionarNota(5)" data-nota="5">★</span>
             </div>
 
-            <button type="button" class="btn-add-rapido" style="width: 100%; padding: 10px;" onclick="salvarConfiguracoes()">Salvar Alterações</button>
+            <textarea id="aval-comentario" placeholder="Escreva um comentário opcional..." class="input-padrao" style="height: 70px; margin-bottom: 12px;"></textarea>
+            <button type="button" class="btn-principal" onclick="enviarAvaliacaoPedido()">Enviar Avaliação</button>
         </div>
     </div>
 
