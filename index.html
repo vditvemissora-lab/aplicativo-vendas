@@ -23,7 +23,7 @@
         <div class="card-bloco card-topo" id="bloco-topo">
             <span class="tag-badge" id="topo-badge">🌿 TRADIÇÃO E QUALIDADE ARTESANAL</span>
             <h1 id="topo-titulo">Produtos Vargem do Itacolomi</h1>
-            <p class="texto-descricao" id="topo-descricao">
+            <p class="texto-descricao" id="topo-descricao" style="color: #e8f5e9;">
                 O verdadeiro sabor da roça levado até você. Escolha seus produtos e envie o pedido direto pelo WhatsApp.
             </p>
         </div>
@@ -34,6 +34,17 @@
             <div style="display: flex; gap: 10px; justify-content: center; flex-wrap: wrap;">
                 <button type="button" class="btn-add-rapido" onclick="abrirModalProduto()">➕ Adicionar Novo Produto</button>
                 <button type="button" class="btn-detalhes" onclick="abrirModalConfig()">✏️ Editar Textos / Senha</button>
+            </div>
+        </div>
+
+        <!-- Seletor de CEP para Precificação Regional -->
+        <div class="card-bloco bloco-cep">
+            <label for="input-cep-cliente" style="font-weight: bold; color: #2e4d30; display: block; margin-bottom: 6px;">
+                📍 Digite seu CEP para calcular os preços da sua região:
+            </label>
+            <div class="cep-input-grupo">
+                <input type="text" id="input-cep-cliente" placeholder="00000-000" maxlength="9" oninput="mascaraEVerificarCEP(this)">
+                <span id="badge-regiao" class="badge-regiao regiao-mg">Tabela: Minas Gerais</span>
             </div>
         </div>
 
@@ -109,8 +120,16 @@
                 <label style="font-size: 13px; font-weight: bold;">Nome do Produto:</label>
                 <input type="text" id="input-prod-nome" placeholder="Ex: Queijo Minas" style="padding: 8px; border: 1px solid #ccc; border-radius: 6px;">
                 
-                <label style="font-size: 13px; font-weight: bold;">Preço (R$):</label>
-                <input type="number" step="0.01" id="input-prod-preco" placeholder="Ex: 25.00" style="padding: 8px; border: 1px solid #ccc; border-radius: 6px;">
+                <div style="display: flex; gap: 10px;">
+                    <div style="flex: 1; display: flex; flex-direction: column; gap: 4px;">
+                        <label style="font-size: 12px; font-weight: bold; color: #2e4d30;">Preço Minas Gerais (R$):</label>
+                        <input type="number" step="0.01" id="input-prod-preco-mg" placeholder="Ex: 22.00" style="padding: 8px; border: 1px solid #2e4d30; border-radius: 6px; width: 100%; box-sizing: border-box;">
+                    </div>
+                    <div style="flex: 1; display: flex; flex-direction: column; gap: 4px;">
+                        <label style="font-size: 12px; font-weight: bold; color: #b85d19;">Preço Resto do Brasil (R$):</label>
+                        <input type="number" step="0.01" id="input-prod-preco-br" placeholder="Ex: 28.00" style="padding: 8px; border: 1px solid #b85d19; border-radius: 6px; width: 100%; box-sizing: border-box;">
+                    </div>
+                </div>
                 
                 <label style="font-size: 13px; font-weight: bold;">Descrição:</label>
                 <textarea id="input-prod-desc" placeholder="Detalhes do produto..." style="padding: 8px; border: 1px solid #ccc; border-radius: 6px; height: 60px;"></textarea>
