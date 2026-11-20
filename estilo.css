@@ -1,3 +1,6 @@
+* {
+    box-sizing: border-box;
+}
 body {
     font-family: Arial, sans-serif;
     background-color: #f4f6f4;
@@ -6,7 +9,7 @@ body {
     color: #333;
 }
 .main-container {
-    max-width: 600px;
+    max-width: 640px;
     margin: 0 auto;
     padding: 15px;
 }
@@ -15,10 +18,124 @@ body {
     border-radius: 12px;
     padding: 20px;
     margin-bottom: 15px;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.06);
 }
+
+/* Tela de Login */
+.login-wrapper {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 15px;
+    background: linear-gradient(180deg, #e8f0e8 0%, #f4f6f4 100%);
+}
+.card-login {
+    width: 100%;
+    max-width: 400px;
+    text-align: center;
+}
+.card-login h1 {
+    color: #2e4d30;
+    font-size: 22px;
+    margin: 10px 0 6px 0;
+}
+.tag-badge-verde {
+    background: #e6f4ea;
+    color: #2e4d30;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: bold;
+}
+.form-login {
+    text-align: left;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-top: 15px;
+}
+.campo-grupo {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+.campo-grupo label {
+    font-size: 13px;
+    font-weight: bold;
+    color: #2e4d30;
+}
+.campo-grupo input, .input-padrao {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    font-size: 14px;
+}
+.checkbox-lembrar {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    color: #555;
+    cursor: pointer;
+}
+.login-alternar {
+    margin-top: 14px;
+}
+.btn-link {
+    background: none;
+    color: #2e4d30;
+    text-decoration: underline;
+    font-size: 13px;
+    padding: 4px;
+}
+.dica-acesso-teste {
+    margin-top: 16px;
+    padding: 10px;
+    background: #f8f9fa;
+    border-radius: 8px;
+    color: #666;
+    font-size: 12px;
+    line-height: 1.5;
+}
+
+/* Barra superior logado */
+.barra-topo-logado {
+    background: #1f3620;
+    color: white;
+    padding: 10px 15px;
+}
+.barra-conteudo {
+    max-width: 640px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 14px;
+}
+.pill-perfil {
+    background: rgba(255,255,255,0.2);
+    padding: 2px 8px;
+    border-radius: 12px;
+    font-size: 11px;
+    margin-left: 6px;
+}
+.btn-sair {
+    background: rgba(255,255,255,0.15);
+    color: white;
+    padding: 5px 12px;
+    font-size: 12px;
+}
+
+/* Cabeçalhos */
 .card-topo {
     background-color: #2e4d30;
+    color: white;
+    text-align: center;
+}
+.card-topo-admin {
+    background-color: #1f3620;
     color: white;
     text-align: center;
 }
@@ -32,6 +149,7 @@ body {
 .titulo-secao {
     color: #2e4d30;
     margin-top: 0;
+    font-size: 18px;
 }
 .texto-descricao, .texto-descricao-centro {
     font-size: 14px;
@@ -39,43 +157,80 @@ body {
     text-align: center;
 }
 
-/* Bloco de CEP */
+/* Abas e Filtros */
+.abas-navegacao {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 15px;
+    overflow-x: auto;
+}
+.aba-btn {
+    flex: 1;
+    background: #e2e8e2;
+    color: #2e4d30;
+    padding: 10px;
+    border-radius: 8px;
+    font-size: 13px;
+    white-space: nowrap;
+}
+.aba-btn.ativa {
+    background: #2e4d30;
+    color: white;
+}
+.contador-aba {
+    background: #d9534f;
+    color: white;
+    border-radius: 10px;
+    padding: 1px 6px;
+    font-size: 11px;
+    margin-left: 4px;
+}
+.filtros-status {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 15px;
+    flex-wrap: wrap;
+}
+.filtro-btn {
+    flex: 1;
+    background: #fff;
+    border: 1px solid #ccc;
+    color: #444;
+    padding: 8px;
+    border-radius: 8px;
+    font-size: 12px;
+}
+.filtro-btn.ativo {
+    background: #2e4d30;
+    color: white;
+    border-color: #2e4d30;
+}
+
+/* CEP discreto */
 .bloco-cep {
-    border-left: 5px solid #2e4d30;
-    padding: 15px 20px;
+    border-left: 4px solid #2e4d30;
+    padding: 14px 18px;
 }
 .cep-input-grupo {
     display: flex;
     align-items: center;
     gap: 10px;
-    flex-wrap: wrap;
 }
 .cep-input-grupo input {
-    padding: 10px;
+    padding: 9px;
     border: 1px solid #ccc;
     border-radius: 8px;
     font-size: 15px;
     width: 130px;
     font-weight: bold;
-    letter-spacing: 1px;
 }
-.badge-regiao {
-    padding: 6px 12px;
-    border-radius: 20px;
+.texto-cep-status {
     font-size: 13px;
+    color: #2e4d30;
     font-weight: bold;
 }
-.regiao-mg {
-    background-color: #e6f4ea;
-    color: #1e7e34;
-    border: 1px solid #b7e1cd;
-}
-.regiao-br {
-    background-color: #fef0e6;
-    color: #b85d19;
-    border: 1px solid #f5c6a5;
-}
 
+/* Produtos */
 .grid-produtos {
     display: flex;
     flex-direction: column;
@@ -113,15 +268,8 @@ body {
     font-size: 14px;
     display: block;
 }
-.preco-admin-sub {
-    font-size: 11px;
-    color: #666;
-    display: block;
-    margin-top: 2px;
-}
 .status-texto {
     font-size: 12px;
-    color: #2e4d30;
     font-weight: bold;
     display: block;
     margin-top: 3px;
@@ -131,77 +279,79 @@ body {
     flex-direction: column;
     gap: 5px;
 }
+
+/* Botões Gerais */
 button {
     cursor: pointer;
     border: none;
     border-radius: 6px;
-    padding: 6px 12px;
+    padding: 7px 12px;
     font-size: 13px;
     font-weight: bold;
 }
-.btn-detalhes {
-    background-color: #e0e0e0;
-    color: #333;
-}
-.btn-add-rapido {
+.btn-principal {
     background-color: #2e4d30;
     color: white;
+    width: 100%;
+    padding: 12px;
+    font-size: 15px;
+    border-radius: 8px;
 }
-.btn-toggle-disp {
-    background-color: #d9534f;
-    color: white;
-}
-.btn-editar-prod {
-    background-color: #f0ad4e;
-    color: white;
-}
-.btn-excluir-prod {
-    background-color: #d9534f;
-    color: white;
-}
+.btn-detalhes { background-color: #e0e0e0; color: #333; }
+.btn-add-rapido { background-color: #2e4d30; color: white; }
+.btn-editar-prod { background-color: #f0ad4e; color: white; }
+.btn-excluir-prod, .btn-toggle-disp { background-color: #d9534f; color: white; }
+.btn-avancar-status { background-color: #0275d8; color: white; padding: 9px 14px; }
+.btn-confirmar-recebimento { background-color: #28a745; color: white; padding: 9px 14px; width: 100%; margin-top: 8px; }
+.btn-avaliar-pedido { background-color: #f0ad4e; color: #222; padding: 9px 14px; width: 100%; margin-top: 8px; }
 
-/* Estilo do Botão Flutuante do Cadeado (Admin) */
-.btn-admin-cadeado {
-    position: fixed;
-    bottom: 20px;
-    right: 20px;
-    background-color: #2e4d30;
-    color: white;
-    border: none;
-    border-radius: 50%;
-    width: 55px;
-    height: 55px;
-    font-size: 24px;
-    cursor: pointer;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.3);
-    z-index: 9999;
+/* Cards de Pedidos */
+.lista-pedidos-cards {
     display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+.card-pedido {
+    background: #fff;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    padding: 15px;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+}
+.pedido-cabecalho {
+    display: flex;
+    justify-content: space-between;
     align-items: center;
-    justify-content: center;
-    transition: transform 0.2s;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 8px;
+    margin-bottom: 10px;
 }
-.btn-admin-cadeado:hover {
-    transform: scale(1.1);
+.badge-status {
+    padding: 4px 10px;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: bold;
+}
+.status-pendente { background: #fff3cd; color: #856404; }
+.status-envio { background: #cce5ff; color: #004085; }
+.status-concluido { background: #d4edda; color: #155724; }
+
+.pedido-itens-lista {
+    margin: 8px 0;
+    padding-left: 18px;
+    font-size: 13px;
+    color: #444;
+}
+.caixa-avaliacao-salva {
+    background: #f8f9fa;
+    border-left: 3px solid #f0ad4e;
+    padding: 8px 12px;
+    margin-top: 10px;
+    font-size: 13px;
+    border-radius: 4px;
 }
 
-/* Oculta elementos administrativos por padrão */
-.admin-only {
-    display: none !important;
-}
-body.modo-admin .admin-only {
-    display: flex !important;
-}
-body.modo-admin .admin-only.card-bloco {
-    display: block !important;
-}
-body.modo-admin .admin-only.preco-admin-sub {
-    display: block !important;
-}
-body.modo-admin .card-produto-item {
-    border: 2px dashed #2e4d30;
-}
-
-/* Carrinho e Modal */
+/* Carrinho */
 .carrinho-itens {
     list-style: none;
     padding: 0;
@@ -222,19 +372,12 @@ body.modo-admin .card-produto-item {
     font-size: 16px;
     font-weight: bold;
 }
-.btn-whatsapp {
-    background-color: #25d366;
-    color: white;
-    width: 100%;
-    padding: 12px;
-    font-size: 15px;
-    border-radius: 8px;
-    margin-top: 10px;
-}
+
+/* Modais e Estrelas */
 .modal-fundo {
     position: fixed;
     top: 0; left: 0; width: 100%; height: 100%;
-    background: rgba(0,0,0,0.5);
+    background: rgba(0,0,0,0.55);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -245,7 +388,7 @@ body.modo-admin .card-produto-item {
     padding: 20px;
     border-radius: 12px;
     width: 90%;
-    max-width: 400px;
+    max-width: 420px;
     text-align: center;
     position: relative;
 }
@@ -256,7 +399,18 @@ body.modo-admin .card-produto-item {
     cursor: pointer;
 }
 .modal-preco-destaque { font-size: 18px; font-weight: bold; color: #2e4d30; }
-.modal-texto-desc { font-size: 14px; color: #666; margin: 15px 0; }
+.modal-texto-desc { font-size: 14px; color: #666; margin: 12px 0; }
 .modal-controle-qtd { display: flex; align-items: center; justify-content: space-between; margin-bottom: 15px; }
 .seletor-qtd { display: flex; align-items: center; gap: 10px; }
 .seletor-qtd button { background: #ddd; padding: 5px 10px; }
+
+.estrelas-seletor {
+    font-size: 34px;
+    color: #ccc;
+    cursor: pointer;
+    margin: 10px 0 15px 0;
+    user-select: none;
+}
+.estrelas-seletor span.ativa {
+    color: #f5b301;
+}
