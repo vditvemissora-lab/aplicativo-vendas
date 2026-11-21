@@ -1,38 +1,26 @@
-// =========================================================================
-// CONFIGURAÇÃO DO BANCO DE DADOS NA NUVEM (FIREBASE / SUPABASE)
-// =========================================================================
-// Quando criar seu projeto no Supabase ou Firebase, cole as chaves abaixo
-// e altere USAR_NUVEM para true.
 const CONFIG_NUVEM = {
     USAR_NUVEM: false,
     SUPABASE_URL: "https://SEU-PROJETO.supabase.co",
     SUPABASE_ANON_KEY: "SUA-CHAVE-PUBLICA-ANON"
 };
 
-// Camada de Dados Centralizada (facilita migrar localStorage -> Nuvem)
 const DB = {
     async carregar(chave, padrao) {
-        if (CONFIG_NUVEM.USAR_NUVEM) {
-            // Ponto de integração REST com Supabase/Firebase:
-            // const res = await fetch(`${CONFIG_NUVEM.SUPABASE_URL}/rest/v1/${chave}?select=*`, { headers: { apikey: CONFIG_NUVEM.SUPABASE_ANON_KEY } });
-            // return await res.json();
+        try {
+            const salvo = localStorage.getItem(chave);
+            if (!salvo) return padrao;
+            const parsed = JSON.parse(salvo);
+            return Array.isArray(padrao) && (!Array.isArray(parsed) || parsed.length === 0) ? padrao : parsed;
+        } catch (e) {
+            return padrao;
         }
-        const salvo = localStorage.getItem(chave);
-        return salvo ? JSON.parse(salvo) : padrao;
     },
     async salvar(chave, dados) {
         localStorage.setItem(chave, JSON.stringify(dados));
-        if (CONFIG_NUVEM.USAR_NUVEM) {
-            // Ponto de envio (POST/UPSERT) para a nuvem:
-            // await fetch(`${CONFIG_NUVEM.SUPABASE_URL}/rest/v1/${chave}`, { method: 'POST', headers: { apikey: CONFIG_NUVEM.SUPABASE_ANON_KEY, 'Content-Type': 'application/json' }, body: JSON.stringify(dados) });
-        }
     }
 };
 
-// =========================================================================
-// ESTADO DA APLICAÇÃO
-// =========================================================================
-let usuarioAtual = null; // { email, nome, perfil: 'vendedor' | 'comprador' }
+let usuarioAtual = null;
 let modoCadastro = false;
 let carrinho = {};
 let produtoAtual = null;
@@ -50,7 +38,7 @@ const produtosIniciais = [
     { id: 5, nome: "Ovos Caipira (Pente 30)", precoMG: 30.00, precoBR: 35.00, desc: "Ovos de galinhas criadas soltas no terreiro.", img: "https://images.unsplash.com/photo-1516467508483-a7212febe31a?w=200", disponivel: true }
 ];
 
-let listaProdutos = [];
+let listaProdutos = [...produtosIniciais];
 let listaPedidos = [];
 let listaUsuarios = [];
 let configSite = {
@@ -60,79 +48,79 @@ let configSite = {
     adminSenha: "1234"
 };
 
-// =========================================================================
-// INICIALIZAÇÃO E AUTENTICAÇÃO
-// =========================================================================
-window.onload = async function() {
-    listaProdutos = await DB.carregar('vargem_produtos', produtosIniciais);
-    listaPedidos = await DB.carregar('vargem_pedidos', []);
-    listaUsuarios = await DB.carregar('vargem_usuarios', []);
-    configSite = await DB.carregar('vargem_config', configSite);
+window.addEventListener("DOMContentLoaded", async function () {
+    listaProdutos = await DB.carregar("vargem_produtos", produtosIniciais);
+    listaPedidos = await DB.carregar("vargem_pedidos", []);
+    listaUsuarios = await DB.carregar("vargem_usuarios", []);
+    configSite = await DB.carregar("vargem_config", configSite);
 
     aplicarTextosLoja();
 
-    // Verifica se o usuário marcou "Salvar login" anteriormente
-    const sessaoSalva = localStorage.getItem('vargem_sessao_ativa') || sessionStorage.getItem('vargem_sessao_ativa');
+    const sessaoSalva = localStorage.getItem("vargem_sessao_ativa") || sessionStorage.getItem("vargem_sessao_ativa");
     if (sessaoSalva) {
-        usuarioAtual = JSON.parse(sessaoSalva);
-        abrirInterfacePorPerfil();
+        try {
+            usuarioAtual = JSON.parse(sessaoSalva);
+            abrirInterfacePorPerfil();
+        } catch (e) {
+            localStorage.removeItem("vargem_sessao_ativa");
+        }
     }
-};
+});
 
 function aplicarTextosLoja() {
-    document.getElementById('titulo-pagina-seo').innerText = configSite.nome;
-    document.getElementById('login-titulo-loja').innerText = configSite.nome;
-    document.getElementById('topo-titulo').innerText = configSite.nome;
-    document.getElementById('topo-descricao').innerText = configSite.desc;
-    document.getElementById('admin-titulo-loja').innerText = `Painel — ${configSite.nome}`;
+    const setTxt = (id, txt) => {
+        const el = document.getElementById(id);
+        if (el) el.innerText = txt;
+    };
+    setTxt("titulo-pagina-seo", configSite.nome);
+    setTxt("login-titulo-loja", configSite.nome);
+    setTxt("topo-titulo", configSite.nome);
+    setTxt("topo-descricao", configSite.desc);
+    setTxt("admin-titulo-loja", "Painel - " + configSite.nome);
 }
 
 function alternarCadastroLogin() {
     modoCadastro = !modoCadastro;
-    document.getElementById('grupo-nome-cadastro').style.display = modoCadastro ? 'flex' : 'none';
-    document.getElementById('btn-submit-login').innerText = modoCadastro ? 'Criar Conta e Entrar' : 'Entrar';
-    document.getElementById('btn-alternar-modo').innerText = modoCadastro
-        ? 'Já tem conta? Fazer login'
-        : 'Não tem conta? Criar cadastro de comprador';
+    document.getElementById("grupo-nome-cadastro").style.display = modoCadastro ? "flex" : "none";
+    document.getElementById("btn-submit-login").innerText = modoCadastro ? "Criar Conta e Entrar" : "Entrar";
+    document.getElementById("btn-alternar-modo").innerText = modoCadastro
+        ? "Já tem conta? Fazer login"
+        : "Não tem conta? Criar cadastro de comprador";
 }
 
 async function realizarLogin(event) {
     event.preventDefault();
-    const email = document.getElementById('login-email').value.trim().toLowerCase();
-    const senha = document.getElementById('login-senha').value.trim();
-    const lembrar = document.getElementById('login-lembrar').checked;
+    const email = document.getElementById("login-email").value.trim().toLowerCase();
+    const senha = document.getElementById("login-senha").value.trim();
+    const lembrar = document.getElementById("login-lembrar").checked;
 
-    // 1. Verifica se é o Vendedor / Administrador
     if (email === configSite.adminEmail.toLowerCase() && senha === configSite.adminSenha) {
-        usuarioAtual = { email: email, nome: "Administrador / Vendedor", perfil: "vendedor" };
+        usuarioAtual = { email, nome: "Administrador / Vendedor", perfil: "vendedor" };
         salvarSessao(lembrar);
         abrirInterfacePorPerfil();
         return;
     }
 
-    // 2. Fluxo de Cadastro de Comprador
     if (modoCadastro) {
-        const nome = document.getElementById('login-nome').value.trim();
+        const nome = document.getElementById("login-nome").value.trim();
         if (!nome) {
             alert("Digite seu nome completo para concluir o cadastro.");
             return;
         }
-        const jaExiste = listaUsuarios.find(u => u.email === email);
-        if (jaExiste) {
+        if (listaUsuarios.some(u => u.email === email)) {
             alert("Este e-mail já está cadastrado. Faça login normalmente.");
             alternarCadastroLogin();
             return;
         }
         const novoUser = { email, senha, nome, perfil: "comprador" };
         listaUsuarios.push(novoUser);
-        await DB.salvar('vargem_usuarios', listaUsuarios);
+        await DB.salvar("vargem_usuarios", listaUsuarios);
         usuarioAtual = { email, nome, perfil: "comprador" };
         salvarSessao(lembrar);
         abrirInterfacePorPerfil();
         return;
     }
 
-    // 3. Login de Comprador existente (ou criação rápida no primeiro acesso)
     let user = listaUsuarios.find(u => u.email === email);
     if (user) {
         if (user.senha !== senha) {
@@ -141,11 +129,10 @@ async function realizarLogin(event) {
         }
         usuarioAtual = { email: user.email, nome: user.nome, perfil: "comprador" };
     } else {
-        // Facilita entrada direta para novos compradores no modo teste
-        const nomeDerivado = email.split('@')[0];
+        const nomeDerivado = email.split("@")[0] || "Cliente";
         user = { email, senha, nome: nomeDerivado, perfil: "comprador" };
         listaUsuarios.push(user);
-        await DB.salvar('vargem_usuarios', listaUsuarios);
+        await DB.salvar("vargem_usuarios", listaUsuarios);
         usuarioAtual = { email: user.email, nome: user.nome, perfil: "comprador" };
     }
 
@@ -156,61 +143,58 @@ async function realizarLogin(event) {
 function salvarSessao(lembrar) {
     const json = JSON.stringify(usuarioAtual);
     if (lembrar) {
-        localStorage.setItem('vargem_sessao_ativa', json);
-        sessionStorage.removeItem('vargem_sessao_ativa');
+        localStorage.setItem("vargem_sessao_ativa", json);
+        sessionStorage.removeItem("vargem_sessao_ativa");
     } else {
-        sessionStorage.setItem('vargem_sessao_ativa', json);
-        localStorage.removeItem('vargem_sessao_ativa');
+        sessionStorage.setItem("vargem_sessao_ativa", json);
+        localStorage.removeItem("vargem_sessao_ativa");
     }
 }
 
 function sairDaConta() {
     usuarioAtual = null;
-    localStorage.removeItem('vargem_sessao_ativa');
-    sessionStorage.removeItem('vargem_sessao_ativa');
-    document.getElementById('barra-usuario').style.display = 'none';
-    document.getElementById('area-comprador').style.display = 'none';
-    document.getElementById('area-vendedor').style.display = 'none';
-    document.getElementById('tela-login').style.display = 'flex';
+    localStorage.removeItem("vargem_sessao_ativa");
+    sessionStorage.removeItem("vargem_sessao_ativa");
+    document.getElementById("barra-usuario").style.display = "none";
+    document.getElementById("area-comprador").style.display = "none";
+    document.getElementById("area-vendedor").style.display = "none";
+    document.getElementById("tela-login").style.display = "flex";
 }
 
 function abrirInterfacePorPerfil() {
-    document.getElementById('tela-login').style.display = 'none';
-    document.getElementById('barra-usuario').style.display = 'block';
-    document.getElementById('usuario-logado-nome').innerText = usuarioAtual.nome;
+    document.getElementById("tela-login").style.display = "none";
+    document.getElementById("barra-usuario").style.display = "block";
+    document.getElementById("usuario-logado-nome").innerText = usuarioAtual.nome;
 
-    if (usuarioAtual.perfil === 'vendedor') {
-        document.getElementById('usuario-logado-perfil').innerText = 'Vendedor';
-        document.getElementById('area-comprador').style.display = 'none';
-        document.getElementById('area-vendedor').style.display = 'block';
+    if (usuarioAtual.perfil === "vendedor") {
+        document.getElementById("usuario-logado-perfil").innerText = "Vendedor";
+        document.getElementById("area-comprador").style.display = "none";
+        document.getElementById("area-vendedor").style.display = "block";
         renderizarPainelVendedor();
     } else {
-        document.getElementById('usuario-logado-perfil').innerText = 'Comprador';
-        document.getElementById('area-vendedor').style.display = 'none';
-        document.getElementById('area-comprador').style.display = 'block';
+        document.getElementById("usuario-logado-perfil").innerText = "Comprador";
+        document.getElementById("area-vendedor").style.display = "none";
+        document.getElementById("area-comprador").style.display = "block";
         renderizarVitrineComprador();
         renderizarPedidosComprador();
     }
 }
 
-// =========================================================================
-// FLUXO DO COMPRADOR (CEP, VITRINE, CARRINHO, PEDIDOS, CONFIRMAÇÃO E AVALIAÇÃO)
-// =========================================================================
 function obterPrecoAtivo(prod) {
     return isMinasGerais ? prod.precoMG : prod.precoBR;
 }
 
 function mascaraEVerificarCEP(input) {
-    let valor = input.value.replace(/\D/g, '');
-    if (valor.length > 5) valor = valor.substring(0, 5) + '-' + valor.substring(5, 8);
+    let valor = input.value.replace(/\D/g, "");
+    if (valor.length > 5) valor = valor.substring(0, 5) + "-" + valor.substring(5, 8);
     input.value = valor;
     cepDigitado = valor;
 
-    const numeros = valor.replace(/\D/g, '');
-    const status = document.getElementById('status-cep-discreto');
+    const numeros = valor.replace(/\D/g, "");
+    const status = document.getElementById("status-cep-discreto");
 
     if (numeros.length === 8) {
-        isMinasGerais = numeros.startsWith('3');
+        isMinasGerais = numeros.startsWith("3");
         status.innerText = "✓ CEP confirmado";
     } else {
         isMinasGerais = true;
@@ -222,33 +206,35 @@ function mascaraEVerificarCEP(input) {
 }
 
 function mudarAbaComprador(aba) {
-    document.getElementById('tab-comp-vitrine').classList.toggle('ativa', aba === 'vitrine');
-    document.getElementById('tab-comp-pedidos').classList.toggle('ativa', aba === 'pedidos');
-    document.getElementById('sub-comprador-vitrine').style.display = aba === 'vitrine' ? 'block' : 'none';
-    document.getElementById('sub-comprador-pedidos').style.display = aba === 'pedidos' ? 'block' : 'none';
-    if (aba === 'pedidos') renderizarPedidosComprador();
+    document.getElementById("tab-comp-vitrine").classList.toggle("ativa", aba === "vitrine");
+    document.getElementById("tab-comp-pedidos").classList.toggle("ativa", aba === "pedidos");
+    document.getElementById("sub-comprador-vitrine").style.display = aba === "vitrine" ? "block" : "none";
+    document.getElementById("sub-comprador-pedidos").style.display = aba === "pedidos" ? "block" : "none";
+    if (aba === "vitrine") renderizarVitrineComprador();
+    if (aba === "pedidos") renderizarPedidosComprador();
 }
 
 function renderizarVitrineComprador() {
-    const grid = document.getElementById('grid-produtos');
-    grid.innerHTML = '';
+    const grid = document.getElementById("grid-produtos");
+    if (!grid) return;
+    grid.innerHTML = "";
 
     listaProdutos.forEach(prod => {
         const preco = obterPrecoAtivo(prod);
-        const div = document.createElement('div');
-        div.className = 'card-produto-item';
+        const div = document.createElement("div");
+        div.className = "card-produto-item";
         div.innerHTML = `
             <img src="${prod.img}" alt="${prod.nome}" class="prod-foto" onerror="this.src='https://via.placeholder.com/65?text=Foto'">
             <div class="prod-info-rapida">
                 <h3>${prod.nome}</h3>
-                <span class="preco">R$ ${preco.toFixed(2).replace('.', ',')}</span>
-                <span class="status-texto" style="color: ${prod.disponivel ? '#2e4d30' : '#d9534f'}">
-                    ${prod.disponivel ? 'Disponível' : 'Esgotado'}
+                <span class="preco">R$ ${preco.toFixed(2).replace(".", ",")}</span>
+                <span class="status-texto" style="color: ${prod.disponivel ? "#2e4d30" : "#d9534f"}">
+                    ${prod.disponivel ? "Disponível" : "Esgotado"}
                 </span>
             </div>
             <div class="prod-botoes">
                 <button type="button" class="btn-detalhes" onclick="abrirDetalhes(${prod.id})">Detalhes</button>
-                <button type="button" class="btn-add-rapido" onclick="adicionarDireto(${prod.id})" ${!prod.disponivel ? 'disabled style="background:#ccc"' : ''}>+ Adicionar</button>
+                <button type="button" class="btn-add-rapido" onclick="adicionarDireto(${prod.id})" ${!prod.disponivel ? "disabled style='background:#ccc'" : ""}>+ Adicionar</button>
             </div>
         `;
         grid.appendChild(div);
@@ -260,22 +246,22 @@ function abrirDetalhes(id) {
     if (!prod) return;
     produtoAtual = prod;
     const preco = obterPrecoAtivo(prod);
-    document.getElementById('modal-icone').innerHTML = `<img src="${prod.img}" alt="${prod.nome}" style="width:130px;height:130px;object-fit:cover;border-radius:10px;">`;
-    document.getElementById('modal-titulo').innerText = prod.nome;
-    document.getElementById('modal-preco').innerText = `R$ ${preco.toFixed(2).replace('.', ',')}`;
-    document.getElementById('modal-descricao').innerText = prod.desc;
+    document.getElementById("modal-icone").innerHTML = `<img src="${prod.img}" alt="${prod.nome}" style="width:130px;height:130px;object-fit:cover;border-radius:10px;">`;
+    document.getElementById("modal-titulo").innerText = prod.nome;
+    document.getElementById("modal-preco").innerText = `R$ ${preco.toFixed(2).replace(".", ",")}`;
+    document.getElementById("modal-descricao").innerText = prod.desc;
     qtdModal = 1;
-    document.getElementById('modal-qtd').innerText = qtdModal;
-    document.getElementById('modal-detalhes').style.display = 'flex';
+    document.getElementById("modal-qtd").innerText = qtdModal;
+    document.getElementById("modal-detalhes").style.display = "flex";
 }
 
 function fecharDetalhes() {
-    document.getElementById('modal-detalhes').style.display = 'none';
+    document.getElementById("modal-detalhes").style.display = "none";
 }
 
 function alterarQtdModal(v) {
     qtdModal = Math.max(1, qtdModal + v);
-    document.getElementById('modal-qtd').innerText = qtdModal;
+    document.getElementById("modal-qtd").innerText = qtdModal;
 }
 
 function adicionarDireto(id) {
@@ -298,414 +284,4 @@ function alterarQtdCarrinho(id, v) {
 }
 
 function atualizarCarrinhoVisual() {
-    const lista = document.getElementById('lista-carrinho-itens');
-    const avisoVazio = document.getElementById('lista-carrinho-vazia');
-    const containerTotal = document.getElementById('container-total');
-    const containerEntrega = document.getElementById('container-entrega');
-    const btnFinalizar = document.getElementById('btn-finalizar-pedido');
-
-    lista.innerHTML = '';
-    let total = 0, temItens = false;
-
-    for (let id in carrinho) {
-        const prod = listaProdutos.find(p => p.id == id);
-        if (!prod) continue;
-        temItens = true;
-        const qtd = carrinho[id];
-        const preco = obterPrecoAtivo(prod);
-        total += preco * qtd;
-
-        const li = document.createElement('li');
-        li.className = 'carrinho-item-linha';
-        li.innerHTML = `
-            <span>${prod.nome} (R$ ${preco.toFixed(2).replace('.', ',')})</span>
-            <div class="seletor-qtd">
-                <button type="button" onclick="alterarQtdCarrinho(${prod.id}, -1)">-</button>
-                <span>${qtd}</span>
-                <button type="button" onclick="alterarQtdCarrinho(${prod.id}, 1)">+</button>
-            </div>
-        `;
-        lista.appendChild(li);
-    }
-
-    avisoVazio.style.display = temItens ? 'none' : 'block';
-    containerTotal.style.display = temItens ? 'flex' : 'none';
-    containerEntrega.style.display = temItens ? 'flex' : 'none';
-    btnFinalizar.style.display = temItens ? 'block' : 'none';
-    document.getElementById('valor-total').innerText = `R$ ${total.toFixed(2).replace('.', ',')}`;
-}
-
-async function finalizarPedidoNoSite() {
-    const endereco = document.getElementById('input-endereco').value.trim();
-    const telefone = document.getElementById('input-telefone').value.trim();
-
-    if (!endereco || !telefone) {
-        alert("Preencha o endereço e o telefone para entrega.");
-        return;
-    }
-
-    const itensPedido = [];
-    let total = 0;
-
-    for (let id in carrinho) {
-        const prod = listaProdutos.find(p => p.id == id);
-        if (!prod) continue;
-        const qtd = carrinho[id];
-        const precoUnit = obterPrecoAtivo(prod);
-        total += precoUnit * qtd;
-        itensPedido.push({ nome: prod.nome, qtd, precoUnit });
-    }
-
-    const novoPedido = {
-        id: Math.floor(1000 + Math.random() * 9000),
-        clienteEmail: usuarioAtual.email,
-        clienteNome: usuarioAtual.nome,
-        telefone,
-        cep: cepDigitado || "Não informado",
-        regiao: isMinasGerais ? "MG" : "Outros Estados",
-        endereco,
-        itens: itensPedido,
-        total,
-        status: "pendente", // pendente -> envio -> concluido
-        data: new Date().toLocaleString('pt-BR'),
-        avaliacao: null
-    };
-
-    listaPedidos.unshift(novoPedido);
-    await DB.salvar('vargem_pedidos', listaPedidos);
-
-    carrinho = {};
-    document.getElementById('input-endereco').value = '';
-    atualizarCarrinhoVisual();
-    renderizarPedidosComprador();
-    mudarAbaComprador('pedidos');
-    alert(`Pedido #${novoPedido.id} registrado com sucesso! Acompanhe o andamento na aba Meus Pedidos.`);
-}
-
-function renderizarPedidosComprador() {
-    const container = document.getElementById('lista-pedidos-comprador');
-    const meusPedidos = listaPedidos.filter(p => p.clienteEmail === usuarioAtual.email);
-    const badge = document.getElementById('badge-pedidos-cliente');
-
-    const ativos = meusPedidos.filter(p => p.status !== 'concluido').length;
-    badge.style.display = ativos > 0 ? 'inline-block' : 'none';
-    badge.innerText = ativos;
-
-    if (meusPedidos.length === 0) {
-        container.innerHTML = '<p class="texto-descricao-centro">Você ainda não realizou nenhum pedido.</p>';
-        return;
-    }
-
-    container.innerHTML = '';
-    meusPedidos.forEach(ped => {
-        const div = document.createElement('div');
-        div.className = 'card-pedido';
-
-        let statusLabel = "⏳ Aguardando preparo";
-        let statusClass = "status-pendente";
-        if (ped.status === "envio") {
-            statusLabel = "🚚 Em fase de envio";
-            statusClass = "status-envio";
-        } else if (ped.status === "concluido") {
-            statusLabel = "✅ Entregue e Concluído";
-            statusClass = "status-concluido";
-        }
-
-        const itensHtml = ped.itens.map(i => `<li>${i.qtd}x ${i.nome} — R$ ${(i.qtd * i.precoUnit).toFixed(2).replace('.', ',')}</li>`).join('');
-
-        let acaoCompradorHtml = '';
-        if (ped.status === 'envio') {
-            acaoCompradorHtml = `
-                <button type="button" class="btn-confirmar-recebimento" onclick="confirmarRecebimentoPedido(${ped.id})">
-                    📦 Confirmar Recebimento do Pedido
-                </button>
-            `;
-        } else if (ped.status === 'concluido' && !ped.avaliacao) {
-            acaoCompradorHtml = `
-                <button type="button" class="btn-avaliar-pedido" onclick="abrirModalAvaliacao(${ped.id})">
-                    ⭐ Avaliar Pedido e Entrega
-                </button>
-            `;
-        } else if (ped.avaliacao) {
-            acaoCompradorHtml = `
-                <div class="caixa-avaliacao-salva">
-                    <strong>Sua avaliação:</strong> ${'★'.repeat(ped.avaliacao.nota)}${'☆'.repeat(5 - ped.avaliacao.nota)}<br>
-                    <em>"${ped.avaliacao.comentario || 'Sem comentário adicional.'}"</em>
-                </div>
-            `;
-        }
-
-        div.innerHTML = `
-            <div class="pedido-cabecalho">
-                <strong>Pedido #${ped.id}</strong>
-                <span class="badge-status ${statusClass}">${statusLabel}</span>
-            </div>
-            <small style="color:#666;">Data: ${ped.data}</small>
-            <ul class="pedido-itens-lista">${itensHtml}</ul>
-            <div style="font-weight:bold; color:#2e4d30;">Total: R$ ${ped.total.toFixed(2).replace('.', ',')}</div>
-            ${acaoCompradorHtml}
-        `;
-        container.appendChild(div);
-    });
-}
-
-async function confirmarRecebimentoPedido(idPedido) {
-    if (!confirm("Confirma que você já recebeu este pedido?")) return;
-    const ped = listaPedidos.find(p => p.id === idPedido);
-    if (ped) {
-        ped.status = "concluido";
-        ped.dataRecebimento = new Date().toLocaleString('pt-BR');
-        await DB.salvar('vargem_pedidos', listaPedidos);
-        renderizarPedidosComprador();
-        abrirModalAvaliacao(idPedido);
-    }
-}
-
-function abrirModalAvaliacao(idPedido) {
-    document.getElementById('aval-pedido-id').value = idPedido;
-    document.getElementById('aval-comentario').value = '';
-    selecionarNota(5);
-    document.getElementById('modal-avaliacao').style.display = 'flex';
-}
-
-function fecharModalAvaliacao() {
-    document.getElementById('modal-avaliacao').style.display = 'none';
-}
-
-function selecionarNota(nota) {
-    notaSelecionada = nota;
-    const estrelas = document.querySelectorAll('#estrelas-seletor span');
-    estrelas.forEach(s => {
-        s.classList.toggle('ativa', parseInt(s.dataset.nota) <= nota);
-    });
-}
-
-async function enviarAvaliacaoPedido() {
-    const idPedido = parseInt(document.getElementById('aval-pedido-id').value);
-    const comentario = document.getElementById('aval-comentario').value.trim();
-    const ped = listaPedidos.find(p => p.id === idPedido);
-    if (ped) {
-        ped.avaliacao = {
-            nota: notaSelecionada,
-            comentario,
-            data: new Date().toLocaleString('pt-BR')
-        };
-        await DB.salvar('vargem_pedidos', listaPedidos);
-        fecharModalAvaliacao();
-        renderizarPedidosComprador();
-        alert("Obrigado pela sua avaliação!");
-    }
-}
-
-// =========================================================================
-// FLUXO DO VENDEDOR / ADMINISTRADOR
-// =========================================================================
-function renderizarPainelVendedor() {
-    atualizarContadoresVendedor();
-    filtrarPedidosVendedor(filtroAtualVendedor);
-    renderizarProdutosAdmin();
-    renderizarAvaliacoesVendedor();
-    document.getElementById('conf-nome-site').value = configSite.nome;
-    document.getElementById('conf-desc-site').value = configSite.desc;
-}
-
-function mudarAbaVendedor(aba) {
-    ['pedidos', 'produtos', 'avaliacoes', 'config'].forEach(nome => {
-        document.getElementById(`tab-vend-${nome}`).classList.toggle('ativa', aba === nome);
-        document.getElementById(`sub-vendedor-${nome}`).style.display = aba === nome ? 'block' : 'none';
-    });
-}
-
-function atualizarContadoresVendedor() {
-    document.getElementById('cont-pendente').innerText = listaPedidos.filter(p => p.status === 'pendente').length;
-    document.getElementById('cont-envio').innerText = listaPedidos.filter(p => p.status === 'envio').length;
-    document.getElementById('cont-concluido').innerText = listaPedidos.filter(p => p.status === 'concluido').length;
-}
-
-function filtrarPedidosVendedor(status) {
-    filtroAtualVendedor = status;
-    ['pendente', 'envio', 'concluido'].forEach(st => {
-        document.getElementById(`filtro-${st}`).classList.toggle('ativo', st === status);
-    });
-
-    const container = document.getElementById('lista-pedidos-vendedor');
-    const filtrados = listaPedidos.filter(p => p.status === status);
-
-    if (filtrados.length === 0) {
-        container.innerHTML = '<div class="card-bloco texto-descricao-centro">Nenhum pedido nesta etapa no momento.</div>';
-        return;
-    }
-
-    container.innerHTML = '';
-    filtrados.forEach(ped => {
-        const div = document.createElement('div');
-        div.className = 'card-pedido';
-        const itensHtml = ped.itens.map(i => `<li>${i.qtd}x ${i.nome} — R$ ${(i.qtd * i.precoUnit).toFixed(2).replace('.', ',')}</li>`).join('');
-
-        let botaoAcao = '';
-        if (ped.status === 'pendente') {
-            botaoAcao = `<button type="button" class="btn-avancar-status" onclick="alterarStatusPedido(${ped.id}, 'envio')">🚚 Marcar como Em Fase de Envio</button>`;
-        } else if (ped.status === 'envio') {
-            botaoAcao = `<small style="color:#004085; font-weight:bold;">Aguardando comprador confirmar o recebimento...</small>`;
-        } else if (ped.avaliacao) {
-            botaoAcao = `<div class="caixa-avaliacao-salva"><strong>Avaliação do cliente:</strong> ${'★'.repeat(ped.avaliacao.nota)} — "${ped.avaliacao.comentario || 'Sem comentário'}"</div>`;
-        }
-
-        div.innerHTML = `
-            <div class="pedido-cabecalho">
-                <strong>Pedido #${ped.id} — ${ped.clienteNome}</strong>
-                <span style="font-weight:bold; color:#2e4d30;">R$ ${ped.total.toFixed(2).replace('.', ',')}</span>
-            </div>
-            <div style="font-size:13px; color:#555; line-height:1.5;">
-                <strong>Data:</strong> ${ped.data}<br>
-                <strong>Contato:</strong> ${ped.telefone} (${ped.clienteEmail})<br>
-                <strong>Entrega:</strong> ${ped.endereco} | CEP: ${ped.cep} (${ped.regiao})
-            </div>
-            <ul class="pedido-itens-lista">${itensHtml}</ul>
-            <div style="margin-top:10px;">${botaoAcao}</div>
-        `;
-        container.appendChild(div);
-    });
-}
-
-async function alterarStatusPedido(idPedido, novoStatus) {
-    const ped = listaPedidos.find(p => p.id === idPedido);
-    if (ped) {
-        ped.status = novoStatus;
-        await DB.salvar('vargem_pedidos', listaPedidos);
-        atualizarContadoresVendedor();
-        filtrarPedidosVendedor(filtroAtualVendedor);
-    }
-}
-
-function renderizarProdutosAdmin() {
-    const grid = document.getElementById('grid-produtos-admin');
-    grid.innerHTML = '';
-
-    listaProdutos.forEach(prod => {
-        const div = document.createElement('div');
-        div.className = 'card-produto-item';
-        div.innerHTML = `
-            <img src="${prod.img}" alt="${prod.nome}" class="prod-foto" onerror="this.src='https://via.placeholder.com/65?text=Foto'">
-            <div class="prod-info-rapida">
-                <h3>${prod.nome}</h3>
-                <span style="font-size:12px; color:#2e4d30; font-weight:bold;">Local/MG: R$ ${prod.precoMG.toFixed(2).replace('.', ',')} | Demais: R$ ${prod.precoBR.toFixed(2).replace('.', ',')}</span>
-                <span class="status-texto" style="color:${prod.disponivel ? '#2e4d30' : '#d9534f'}">${prod.disponivel ? 'Ativo na vitrine' : 'Pausado'}</span>
-            </div>
-            <div class="prod-botoes">
-                <button type="button" class="btn-editar-prod" onclick="abrirModalProduto(${prod.id})">Editar</button>
-                <button type="button" class="btn-toggle-disp" onclick="alternarDispAdmin(${prod.id})">${prod.disponivel ? 'Pausar' : 'Ativar'}</button>
-                <button type="button" class="btn-excluir-prod" onclick="excluirProdAdmin(${prod.id})">Excluir</button>
-            </div>
-        `;
-        grid.appendChild(div);
-    });
-}
-
-function abrirModalProduto(id = null) {
-    document.getElementById('edit-prod-id').value = '';
-    document.getElementById('input-prod-icone').value = '';
-    document.getElementById('input-prod-nome').value = '';
-    document.getElementById('input-prod-preco-mg').value = '';
-    document.getElementById('input-prod-preco-br').value = '';
-    document.getElementById('input-prod-desc').value = '';
-
-    if (id) {
-        const prod = listaProdutos.find(p => p.id === id);
-        if (prod) {
-            document.getElementById('edit-prod-id').value = prod.id;
-            document.getElementById('input-prod-icone').value = prod.img;
-            document.getElementById('input-prod-nome').value = prod.nome;
-            document.getElementById('input-prod-preco-mg').value = prod.precoMG;
-            document.getElementById('input-prod-preco-br').value = prod.precoBR;
-            document.getElementById('input-prod-desc').value = prod.desc;
-        }
-    }
-    document.getElementById('modal-produto').style.display = 'flex';
-}
-
-function fecharModalProduto() {
-    document.getElementById('modal-produto').style.display = 'none';
-}
-
-async function salvarProduto() {
-    const id = document.getElementById('edit-prod-id').value;
-    const img = document.getElementById('input-prod-icone').value.trim() || "https://via.placeholder.com/150?text=Produto";
-    const nome = document.getElementById('input-prod-nome').value.trim();
-    const precoMG = parseFloat(document.getElementById('input-prod-preco-mg').value);
-    const precoBR = parseFloat(document.getElementById('input-prod-preco-br').value);
-    const desc = document.getElementById('input-prod-desc').value.trim();
-
-    if (!nome || isNaN(precoMG) || isNaN(precoBR)) {
-        alert("Preencha o nome e os dois preços corretamente!");
-        return;
-    }
-
-    if (id) {
-        const prod = listaProdutos.find(p => p.id == id);
-        if (prod) Object.assign(prod, { img, nome, precoMG, precoBR, desc });
-    } else {
-        const novoId = listaProdutos.length > 0 ? Math.max(...listaProdutos.map(p => p.id)) + 1 : 1;
-        listaProdutos.push({ id: novoId, nome, precoMG, precoBR, desc: desc || "Produto artesanal.", img, disponivel: true });
-    }
-
-    await DB.salvar('vargem_produtos', listaProdutos);
-    fecharModalProduto();
-    renderizarProdutosAdmin();
-}
-
-async function alternarDispAdmin(id) {
-    const prod = listaProdutos.find(p => p.id === id);
-    if (prod) {
-        prod.disponivel = !prod.disponivel;
-        await DB.salvar('vargem_produtos', listaProdutos);
-        renderizarProdutosAdmin();
-    }
-}
-
-async function excluirProdAdmin(id) {
-    if (confirm("Deseja realmente excluir este produto?")) {
-        listaProdutos = listaProdutos.filter(p => p.id !== id);
-        await DB.salvar('vargem_produtos', listaProdutos);
-        renderizarProdutosAdmin();
-    }
-}
-
-function renderizarAvaliacoesVendedor() {
-    const container = document.getElementById('lista-avaliacoes-vendedor');
-    const avaliados = listaPedidos.filter(p => p.avaliacao !== null);
-
-    if (avaliados.length === 0) {
-        container.innerHTML = '<p class="texto-descricao-centro">Nenhuma avaliação recebida ainda.</p>';
-        return;
-    }
-
-    container.innerHTML = '';
-    avaliados.forEach(ped => {
-        const div = document.createElement('div');
-        div.className = 'card-pedido';
-        div.innerHTML = `
-            <div class="pedido-cabecalho">
-                <strong>${ped.clienteNome} (Pedido #${ped.id})</strong>
-                <span style="color:#f5b301; font-size:16px;">${'★'.repeat(ped.avaliacao.nota)}${'☆'.repeat(5 - ped.avaliacao.nota)}</span>
-            </div>
-            <p style="margin:6px 0; font-size:14px;">"${ped.avaliacao.comentario || 'Cliente avaliou sem comentário.'}"</p>
-            <small style="color:#777;">Avaliado em: ${ped.avaliacao.data}</small>
-        `;
-        container.appendChild(div);
-    });
-}
-
-async function salvarConfiguracoes() {
-    const novoNome = document.getElementById('conf-nome-site').value.trim();
-    const novaDesc = document.getElementById('conf-desc-site').value.trim();
-    const novaSenha = document.getElementById('conf-nova-senha').value.trim();
-
-    if (novoNome) configSite.nome = novoNome;
-    if (novaDesc) configSite.desc = novaDesc;
-    if (novaSenha) configSite.adminSenha = novaSenha;
-
-    await DB.salvar('vargem_config', configSite);
-    aplicarTextosLoja();
-    alert("Configurações atualizadas com sucesso!");
-}
+    const lista =
